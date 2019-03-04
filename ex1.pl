@@ -4,6 +4,7 @@
 %servico(IdServ, Descricao, Instituicao, Cidade).
 %consulta(Data, IdUt, IdServ, Custo).
 
+:- dynamic idUtAtual/1.
 :- dynamic utente/4.
 :- dynamic servico/4.
 :- dynamic consulta/4.
@@ -36,12 +37,20 @@ construir(R, R).
 
 % Registar utentes, serviços e consultas;
 
-nextIdUt(NextId) :-
-    solucoes(Id, utente(Id, _, _, _), Ids),
-    ((max(Ids, MaxId),
-     NextId is MaxId + 1);
-     Ids = [], % se não houver nenhum utente, o novo id será 1
-     NextId is 1).
+idUtAtual(1).
+
+nextIdUt(Id) :-
+    idUtAtual(Id),
+    retract(idUtAtual(Id)),
+    Id2 is Id + 1,
+    assert(idUtAtual(Id2)).
+
+%nextIdUt(NextId) :-
+%    solucoes(Id, utente(Id, _, _, _), Ids),
+%    ((max(Ids, MaxId),
+%     NextId is MaxId + 1);
+%     Ids = [], % se não houver nenhum utente, o novo id será 1
+%     NextId is 1).
 
 registarUtente(Nome, Idade, Cidade) :-
     nao(utente(_, Nome, Idade, Cidade)),
@@ -67,6 +76,11 @@ registarConsulta(Data, IdUt, IdServ, Custo) :-
     assert(consulta(Data, IdUt, IdServ, Custo)).
 
 % Remover utentes, serviços e consultas;
+
+removerUtente(utente(Id, Nome, Idade, Cidade)) :-
+    utente(Id, Nome, Idade, Cidade),
+    retract(utente(Id, Nome, Idade, Cidade)).
+
 % Identificar as instituições prestadoras de serviços;
 % Identificar utentes/serviços/consultas por critérios de seleção;
 % Identificar serviços prestados por instituição/cidade/datas/custo;
