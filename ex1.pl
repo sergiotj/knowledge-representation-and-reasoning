@@ -175,6 +175,15 @@ consultas(Data,IdUt,IdServ,LR) :-
 
 % Identificar os utentes de um serviço/instituição; Tiago e Joel
 
+utentesServico(IdServ, R) :-
+	solucoes(utente(IdUt,Nome,Idade,Cidade), (consulta(Data,IdUt,IdServ,Custo),utente(IdUt,Nome,Idade,Cidade)),L),
+	removeDups(L,R).
+
+utentesInstituicao(Instituicao, R) :-
+	solucoes(utente(IdUt,Nome,Idade,Cidade), (servico(IdServ,_,Instituicao,_),consulta(_,IdUt,IdServ,_),utente(IdUt,Nome,Idade,Cidade)),L),
+	removeDups(L,R).
+
+
 % Identificar serviços realizados por utente/instituição/cidade;
 
 servicosUtente(IdUt, R) :-
