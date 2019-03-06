@@ -13,12 +13,18 @@
 % dados iniciais
 
 init :-
-    registarUtente(a1,b2,c1),
-    registarUtente(a2,b1,c2),
-    registarUtente(a3,b2,c4),
-    registarServico(a1,b2,c1),
-    registarServico(a2,b1,c2),
-    registarServico(a3,b2,c4),
+    registarUtente(u1,19,c1),
+    registarUtente(u2,20,c2),
+    registarUtente(u3,21,c3),
+    registarServico(serv1, csjoane, guimaraes),
+    registarServico(serv2, hospitalbraga, braga),
+    registarServico(serv3, hospitalluz, braga),
+    registarServico(serv4, hospitalluz, guimaraes),
+    registarServico(serv5, uhfamalicao, famalicao),
+    registarServico(serv6, hsantamaria, porto),
+    registarServico(serv7, htrofa, braga),
+    registarServico(serv8, htrofa, braga),
+    registarServico(serv9, hospitalbraga, braga),
     registarConsulta(d1, 1, 1, 1.0),
     registarConsulta(d1, 1, 2, 1.5),
     registarConsulta(d2, 1, 3, 2.3).
@@ -63,15 +69,15 @@ flatten([H|T], [H|T2]) :-
     nao(list(H)),
     flatten(T, T2).
 
-solucoes(F, Q, R) :-
-    Q, assert(tmp(F)), fail.
-solucoes(F, Q, R) :-
-    construir([], R).
-
 construir(L, R) :-
     retract(tmp(X)), !,
     construir([X | L], R).
 construir(R, R).
+
+solucoes(F, Q, R) :-
+    Q, assert(tmp(F)), fail.
+solucoes(F, Q, R) :-
+    construir([], R).
 
 forEach(Var, Set, Format, P, R) :-
     pertence(Var, Set),
@@ -80,6 +86,14 @@ forEach(Var, Set, Format, P, R) :-
     fail.
 forEach(_, _, Format, _, R) :-
     construir([], R).
+
+removeDups([],[]).
+removeDups([H|T],R) :-
+	pertence(H,T),
+	removeDups(T,R).
+removeDups([H|T],[H|R]) :-
+	nao(pertence(H,T)),
+	removeDups(T,R).
 
 % operações
 
@@ -133,15 +147,28 @@ removerConsulta(consulta(Data, IdUt, IdServ, Custo)) :-
 
 % Identificar as instituições prestadoras de serviços;
 
-% Identificar utentes/serviços/consultas por critérios de seleção;
+listarInstituicoes(Result) :-
+    solucoes(Inst, servico(_,_,Inst,_), L),
+    removeDups(L, Result).
 
-% Identificar serviços prestados por instituição/cidade/datas/custo;
+% Identificar utentes/serviços/consultas por critérios de seleção; Joel
 
-% Identificar os utentes de um serviço/instituição;
+% Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
+
+% Identificar os utentes de um serviço/instituição; Tiago e Joel
 
 % Identificar serviços realizados por utente/instituição/cidade;
 
-% Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data.
+servicosUtente(IdUt, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), (consulta(Data,IdUt,IdServ,Custo),servico(IdServ,Descricao,Instituicao,Cidade)),R).
+
+servicosInstituicao(Instituicao, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+
+servicosCidade(Cidade, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+
+% Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
 
 custoUtente(utente(IdUt, _, _, _), Custo) :-
     solucoes(C, consulta(_, IdUt, _, C), Custos),
