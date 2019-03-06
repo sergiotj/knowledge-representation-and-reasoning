@@ -16,9 +16,7 @@ utente(1,ambrosio,18,braga).
 utente(2,maria,23,porto).
 utente(3,jose,23,lisboa).
 utente(4,joana,24,braga).
-consulta(d1, 1, 1, 1.0).
-consulta(d1, 1, 2, 1.5).
-consulta(d2, 1, 3, 2.3).
+
 servico(1, serv1, csjoane, guimaraes).
 servico(2, serv2, hospitalbraga, braga).
 servico(3, serv3, hospitalluz, braga).
