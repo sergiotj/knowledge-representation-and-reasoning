@@ -43,6 +43,20 @@ construir(L, R) :-
     construir([X | L], R).
 construir(R, R).
 
+pertence(X,[]) :- fail.
+pertence(X,[X|T]) :- X==X.
+pertence(X,[H|T]) :-
+	X\=H,
+	pertence(X,T).
+
+removeDups([],[]).
+removeDups([H|T],R) :-
+	pertence(H,T),
+	removeDups(T,R).
+removeDups([H|T],[H|R]) :-
+	nao(pertence(H,T)),
+	removeDups(T,R).
+
 % operações
 
 % Registar utentes, serviços e consultas;
@@ -91,21 +105,7 @@ removerUtente(utente(Id, Nome, Idade, Cidade)) :-
     utente(Id, Nome, Idade, Cidade),
     retract(utente(Id, Nome, Idade, Cidade)).
 
-% Identificar as instituições prestadoras de serviços; Sergio
-
-pertence(X,[]) :- fail.
-pertence(X,[X|T]) :- X==X.
-pertence(X,[H|T]) :-
-	X\=H,
-	pertence(X,T).
-
-removeDups([],[]).
-removeDups([H|T],R) :-
-	pertence(H,T),
-	removeDups(T,R).
-removeDups([H|T],[H|R]) :-
-	nao(pertence(H,T)),
-	removeDups(T,R).
+% Identificar as instituições prestadoras de serviços;
 
 listarInstituicoes(Result) :-
     solucoes(Inst, servico(_,_,Inst,_), L),
@@ -114,11 +114,15 @@ listarInstituicoes(Result) :-
 % Identificar utentes/serviços/consultas por critérios de seleção; Joel
 % Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
 % Identificar os utentes de um serviço/instituição; Tiago e Joel
-% Identificar serviços realizados por utente/instituição/cidade; Tiagos
+% Identificar serviços realizados por utente/instituição/cidade;
+
+servicosUtente(IdUt, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), (consulta(Data,IdUt,IdServ,Custo),servico(IdServ,Descricao,Instituicao,Cidade)),R).
+
 servicosInstituicao(Instituicao, R) :-
 	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
 
-
-
+servicosCidade(Cidade, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
 
 % Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
