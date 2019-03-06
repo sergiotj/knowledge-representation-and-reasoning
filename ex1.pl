@@ -26,6 +26,11 @@ servico(7, serv7, htrofa, braga).
 servico(8, serv8, htrofa, braga).
 servico(9, serv9, hospitalbraga, braga).
 
+consulta(2015-11-20,1,2,22).
+consulta(2016-11-20,1,2,25).
+consulta(2016-09-13,3,5,30).
+consulta(2017-02-28,4,9,45).
+
 % relações auxiliares
 
 nao(X) :-
@@ -140,12 +145,15 @@ consultas(Data,IdUt,IdServ,LR) :-
 % Identificar serviços realizados por utente/instituição/cidade;
 
 servicosUtente(IdUt, R) :-
-	solucoes((IdServ,Descricao,Instituicao,Cidade), (consulta(Data,IdUt,IdServ,Custo),servico(IdServ,Descricao,Instituicao,Cidade)),R).
+	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), (consulta(Data,IdUt,IdServ,Custo),servico(IdServ,Descricao,Instituicao,Cidade)),L),
+	removeDups(L,R).
 
 servicosInstituicao(Instituicao, R) :-
-	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),L),
+	removeDups(L,R).
 
 servicosCidade(Cidade, R) :-
-	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),L),
+	removeDups(L,R).
 
 % Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
