@@ -12,22 +12,22 @@
 
 % dados iniciais
 
-init :-
-    registarUtente(u1,19,c1),
-    registarUtente(u2,20,c2),
-    registarUtente(u3,21,c3),
-    registarServico(serv1, csjoane, guimaraes),
-    registarServico(serv2, hospitalbraga, braga),
-    registarServico(serv3, hospitalluz, braga),
-    registarServico(serv4, hospitalluz, guimaraes),
-    registarServico(serv5, uhfamalicao, famalicao),
-    registarServico(serv6, hsantamaria, porto),
-    registarServico(serv7, htrofa, braga),
-    registarServico(serv8, htrofa, braga),
-    registarServico(serv9, hospitalbraga, braga),
-    registarConsulta(d1, 1, 1, 1.0),
-    registarConsulta(d1, 1, 2, 1.5),
-    registarConsulta(d2, 1, 3, 2.3).
+utente(1,ambrosio,18,braga).
+utente(2,maria,23,porto).
+utente(3,jose,23,lisboa).
+utente(4,joana,24,braga).
+consulta(d1, 1, 1, 1.0).
+consulta(d1, 1, 2, 1.5).
+consulta(d2, 1, 3, 2.3).
+servico(1, serv1, csjoane, guimaraes).
+servico(2, serv2, hospitalbraga, braga).
+servico(3, serv3, hospitalluz, braga).
+servico(4, serv4, hospitalluz, guimaraes).
+servico(5, serv5, uhfamalicao, famalicao).
+servico(6, serv6, hsantamaria, porto).
+servico(7, serv7, htrofa, braga).
+servico(8, serv8, htrofa, braga).
+servico(9, serv9, hospitalbraga, braga).
 
 % relações auxiliares
 
@@ -151,7 +151,22 @@ listarInstituicoes(Result) :-
     solucoes(Inst, servico(_,_,Inst,_), L),
     removeDups(L, Result).
 
-% Identificar utentes/serviços/consultas por critérios de seleção; Joel
+% Identificar utentes/serviços/consultas por critérios de seleção;
+
+	% Extensao do predicado utentes: Nome,Idade,Cidade,LR -> {V,F}
+
+utentes(Nome, Idade, Cidade, LR) :-
+	solucoes(utente(IdUt,Nome,Idade,Cidade), utente(IdUt,Nome,Idade,Cidade), LR).
+
+	% Extensao do predicado servicos: Instituicao,Cidade,LR -> {V,F}
+
+servicos(Instituicao,Cidade,LR) :-
+	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade), LR).
+
+    % Extensao do predicado consultas: Data,IdUt,IdServ,LR -> {V,F}
+
+consultas(Data,IdUt,IdServ,LR) :-
+	solucoes((Data,IdUt,IdServ,Custo), consulta(Data,IdUt,IdServ,Custo), LR).
 
 % Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
 
