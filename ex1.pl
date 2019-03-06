@@ -9,10 +9,22 @@
 :- dynamic servico/4.
 :- dynamic consulta/4.
 
+% povoação
+
 utente(1,ambrosio,18,braga).
 utente(2,maria,23,porto).
 utente(3,jose,23,lisboa).
 utente(4,joana,24,braga).
+
+servico(1, serv1, csjoane, guimaraes).
+servico(2, serv2, hospitalbraga, braga).
+servico(3, serv3, hospitalluz, braga).
+servico(4, serv4, hospitalluz, guimaraes).
+servico(5, serv5, uhfamalicao, famalicao).
+servico(6, serv6, hsantamaria, porto).
+servico(7, serv7, htrofa, braga).
+servico(8, serv8, htrofa, braga).
+servico(9, serv9, hospitalbraga, braga).
 
 % relações auxiliares
 
@@ -37,6 +49,20 @@ construir(L, R) :-
     retract(tmp(X)), !,
     construir([X | L], R).
 construir(R, R).
+
+pertence(X,[]) :- fail.
+pertence(X,[X|T]) :- X==X.
+pertence(X,[H|T]) :-
+	X\=H,
+	pertence(X,T).
+
+removeDups([],[]).
+removeDups([H|T],R) :-
+	pertence(H,T),
+	removeDups(T,R).
+removeDups([H|T],[H|R]) :-
+	nao(pertence(H,T)),
+	removeDups(T,R).
 
 % operações
 
@@ -86,27 +112,40 @@ removerUtente(utente(Id, Nome, Idade, Cidade)) :-
     utente(Id, Nome, Idade, Cidade),
     retract(utente(Id, Nome, Idade, Cidade)).
 
-% Identificar as instituições prestadoras de serviços; Sergio
+% Identificar as instituições prestadoras de serviços;
 
-% ----- Identificar Utentes por critérios -----
-% Extensao do predicado utentes: Nome,Idade,Cidade,LR -> {V,F}
+listarInstituicoes(Result) :-
+    solucoes(Inst, servico(_,_,Inst,_), L),
+    removeDups(L, Result).
+
+% Identificar utentes/serviços/consultas por critérios de seleção;
+
+	% Extensao do predicado utentes: Nome,Idade,Cidade,LR -> {V,F}
 
 utentes(Nome, Idade, Cidade, LR) :-
 	solucoes(utente(IdUt,Nome,Idade,Cidade), utente(IdUt,Nome,Idade,Cidade), LR).
 
-% ----- Identificar Serviços por critérios -----
-% Extensao do predicado servicos: Instituicao,Cidade,LR -> {V,F}
+	% Extensao do predicado servicos: Instituicao,Cidade,LR -> {V,F}
 
 servicos(Instituicao,Cidade,LR) :-
 	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade), LR).
 
-% ----- Identificar Consultas por critérios -----
-% Extensao do predicado consultas: Data,IdUt,IdServ,LR -> {V,F}
+	% Extensao do predicado consultas: Data,IdUt,IdServ,LR -> {V,F}
 
 consultas(Data,IdUt,IdServ,LR) :-
 	solucoes((Data,IdUt,IdServ,Custo), consulta(Data,IdUt,IdServ,Custo), LR).
 
 % Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
 % Identificar os utentes de um serviço/instituição; Tiago e Joel
-% Identificar serviços realizados por utente/instituição/cidade; Tiago
+% Identificar serviços realizados por utente/instituição/cidade;
+
+servicosUtente(IdUt, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), (consulta(Data,IdUt,IdServ,Custo),servico(IdServ,Descricao,Instituicao,Cidade)),R).
+
+servicosInstituicao(Instituicao, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+
+servicosCidade(Cidade, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+
 % Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
