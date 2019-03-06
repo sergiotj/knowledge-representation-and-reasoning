@@ -9,6 +9,16 @@
 :- dynamic servico/4.
 :- dynamic consulta/4.
 
+servico(1, serv1, csjoane, guimaraes).
+servico(2, serv2, hospitalbraga, braga).
+servico(3, serv3, hospitalluz, braga).
+servico(4, serv4, hospitalluz, guimaraes).
+servico(5, serv5, uhfamalicao, famalicao).
+servico(6, serv6, hsantamaria, porto).
+servico(7, serv7, htrofa, braga).
+servico(8, serv8, htrofa, braga).
+servico(9, serv9, hospitalbraga, braga).
+
 % relações auxiliares
 
 nao(X) :-
@@ -82,7 +92,26 @@ removerUtente(utente(Id, Nome, Idade, Cidade)) :-
     retract(utente(Id, Nome, Idade, Cidade)).
 
 % Identificar as instituições prestadoras de serviços; Sergio
-% Identificar utentes/serviços/consultas por critérios de seleção; Joel 
+
+pertence(X,[]) :- fail.
+pertence(X,[X|T]) :- X==X.
+pertence(X,[H|T]) :-
+	X\=H,
+	pertence(X,T).
+
+removeDups([],[]).
+removeDups([H|T],R) :-
+	pertence(H,T),
+	removeDups(T,R).
+removeDups([H|T],[H|R]) :-
+	nao(pertence(H,T)),
+	removeDups(T,R).
+
+listarInstituicoes(Result) :-
+    solucoes(Inst, servico(_,_,Inst,_), L),
+    removeDups(L, Result).
+
+% Identificar utentes/serviços/consultas por critérios de seleção; Joel
 % Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
 % Identificar os utentes de um serviço/instituição; Tiago e Joel
 % Identificar serviços realizados por utente/instituição/cidade; Tiago
