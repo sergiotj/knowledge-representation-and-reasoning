@@ -81,9 +81,9 @@ removerUtente(utente(Id, Nome, Idade, Cidade)) :-
     utente(Id, Nome, Idade, Cidade),
     retract(utente(Id, Nome, Idade, Cidade)).
 
-% Identificar as instituições prestadoras de serviços;
-% Identificar utentes/serviços/consultas por critérios de seleção;
-% Identificar serviços prestados por instituição/cidade/datas/custo;
-% Identificar os utentes de um serviço/instituição;
-% Identificar serviços realizados por utente/instituição/cidade;
-% Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data.
+% Identificar as instituições prestadoras de serviços; Sergio
+% Identificar utentes/serviços/consultas por critérios de seleção; Joel 
+% Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
+% Identificar os utentes de um serviço/instituição; Tiago e Joel
+% Identificar serviços realizados por utente/instituição/cidade; Tiago
+% Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
