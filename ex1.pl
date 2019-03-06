@@ -85,5 +85,11 @@ removerUtente(utente(Id, Nome, Idade, Cidade)) :-
 % Identificar utentes/serviços/consultas por critérios de seleção; Joel 
 % Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
 % Identificar os utentes de um serviço/instituição; Tiago e Joel
-% Identificar serviços realizados por utente/instituição/cidade; Tiago
+% Identificar serviços realizados por utente/instituição/cidade; Tiagos
+servicosInstituicao(Instituicao, R) :-
+	solucoes((IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),R).
+
+
+
+
 % Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
