@@ -12,10 +12,11 @@
 
 % dados iniciais
 
-utente(1,ambrosio,18,braga).
+utente(1,rosalina,34,braga).
 utente(2,maria,23,porto).
 utente(3,jose,23,lisboa).
 utente(4,joana,24,braga).
+utente(5,joao,45,coimbra).
 
 servico(1, serv1, csjoane, guimaraes).
 servico(2, serv2, hospitalbraga, braga).
@@ -166,7 +167,7 @@ utentes(Nome, Idade, Cidade, LR) :-
 servicos(Instituicao,Cidade,LR) :-
 	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade), LR).
 
-    % Extensao do predicado consultas: Data,IdUt,IdServ,LR -> {V,F}
+	% Extensao do predicado consultas: Data,IdUt,IdServ,LR -> {V,F}
 
 consultas(Data,IdUt,IdServ,LR) :-
 	solucoes((Data,IdUt,IdServ,Custo), consulta(Data,IdUt,IdServ,Custo), LR).
