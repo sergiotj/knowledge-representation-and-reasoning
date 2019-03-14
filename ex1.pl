@@ -9,7 +9,7 @@
 % descrição da estrutura do conhecimento
 
 %utente(IdUt, Nome, Idade, Cidade).
-%servico(IdServ, Descricao, Instituicao, Cidade).
+%servico(IdServ, Descricao, Instituicao, Cidade, Capacidade).
 %consulta(Data, IdUt, IdServ, Custo).
 
 :- dynamic idUtAtual/1.
@@ -31,15 +31,15 @@ init :-
     registarUtente(joana,24,braga),
     registarUtente(joao,45,coimbra),
 
-    registarServico(serv1, csjoane, guimaraes),
-    registarServico(serv2, hospitalbraga, braga),
-    registarServico(serv3, hospitalluz, braga),
-    registarServico(serv4, hospitalluz, guimaraes),
-    registarServico(serv5, uhfamalicao, famalicao),
-    registarServico(serv6, hsantamaria, porto),
-    registarServico(serv7, htrofa, braga),
-    registarServico(serv8, htrofa, braga),
-    registarServico(serv9, hospitalbraga, braga),
+    registarServico(serv1, csjoane      , guimaraes, 3),
+    registarServico(serv2, hospitalbraga, braga    , 7),
+    registarServico(serv3, hospitalluz  , braga    , 4),
+    registarServico(serv4, hospitalluz  , guimaraes, 5),
+    registarServico(serv5, uhfamalicao  , famalicao, 2),
+    registarServico(serv6, hsantamaria  , porto    , 3),
+    registarServico(serv7, htrofa       , braga    , 1),
+    registarServico(serv8, htrofa       , braga    , 6),
+    registarServico(serv9, hospitalbraga, braga    , 3),
 
     registarConsulta(2015-11-20,1,2,22),
     registarConsulta(2016-11-20,1,2,25),
@@ -79,17 +79,34 @@ removeDups([H|T],[H|R]) :-
 
 % invariantes
 
+% IdUt é chave primária utente
 +utente(IdUt, Nome, Idade, Cidade) ::
-    (solucoes(IdUt, utente(IdUt, _, _, _), Ids), comprimento(Ids, C), C < 2).
+    (solucoes(IdUt, utente(IdUt, _, _, _), Ids),
+     comprimento(Ids, C), C < 2).
 
+% IdServ é chave primária utente
 +servico(IdServ, Descricao, Instituicao, Cidade) ::
-    (solucoes(IdServ, servico(IdServ, _, _, _), Ids), comprimento(Ids, C), C < 2).
+    (solucoes(IdServ, servico(IdServ, _, _, _, _), Ids),
+     comprimento(Ids, C), C < 2).
 
+% Existe no máximo 1 serviço com a mesma descrição, prestado pela mesma
+% instituição, na mesma cidade,
++servico(IdServ, Descricao, Instituicao, Cidade, Capacidade) ::
+    (solucoes(Id, servico(Id, Descricao, Instituicao, Cidade, _), Ids),
+     comprimento(Ids, C), C < 2).
+
+% IdUt é chave estrangeira, refere-se a um utente
 +consulta(Data, IdUt, IdServ, Custo) ::
     (utente(IdUt, _, _, _)).
 
+% IdServ é chave estrangeira, refere-se a um serviço
 +consulta(Data, IdUt, IdServ, Custo) ::
-    (servico(IdServ, _, _, _)).
+    (servico(IdServ, _, _, _, _)).
+
++consulta(Data, IdUt, IdServ, Custo) ::
+    (servico(IdServ, _, _, _, Capacidade),
+     solucoes(IdServ, consulta(Data, _, IdServ, _), Ids),
+     comprimento(Ids, C), C =< Capacidade).
 
 % predicados evolucao e involucao, e seus auxiliares
 
@@ -136,9 +153,9 @@ registarUtente(Nome, Idade, Cidade) :-
     nextIdUt(NextIdUt),
     evolucao(utente(NextIdUt, Nome, Idade, Cidade)).
 
-registarServico(Descricao, Instituicao, Cidade) :-
+registarServico(Descricao, Instituicao, Cidade, Capacidade) :-
     nextIdServ(NextId),
-    evolucao(servico(NextId, Descricao, Instituicao, Cidade)).
+    evolucao(servico(NextId, Descricao, Instituicao, Cidade, Capacidade)).
 
 registarConsulta(Data, IdUt, IdServ, Custo) :-
     evolucao(consulta(Data, IdUt, IdServ, Custo)).
