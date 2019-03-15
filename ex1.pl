@@ -128,7 +128,7 @@ remove(T) :-
     retract(T).
 remove(T) :-
     assert(T), !, fail.
-    
+
 retrocesso(T) :-
     T, % previne insucesso do predicado retract por não conseguir retirar T
     remove(T),
@@ -194,7 +194,53 @@ servicos(Instituicao,Cidade,LR) :-
 consultas(Data,IdUt,IdServ,LR) :-
 	solucoes((Data,IdUt,IdServ,Custo), consulta(Data,IdUt,IdServ,Custo), LR).
 
+
+
+
 % Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
+
+  % Identificar serviços por Instituição
+listarServicosInstituicao(Instituicao,LR) :-
+  solucoes(IdServ,servico(IdServ,_,Instituicao,_,_),LR).
+
+  % Identificar serviços por Cidade
+listarServicosCidade(Cidade,LR) :-
+  solucoes(IdServ,servico(IdServ,_,_,Cidade,_),LR).
+
+  % Identificar serviços por Datas
+listarServicosData(Data,LR) :-
+  solucoes(IdServ,consulta(Data,_,IdServ,_),LR).
+
+listarServicosEntreDatas(DataI,DataI,LR) :- % se as datas forem iguais
+  listarServicosData(DataI,LR).
+
+listarServicosEntreDatas(DataI,DataF,LR) :-
+  solucoes((IdServ,Data),consulta(Data,_,IdServ,_),T),
+  compararDatas(T,DataI,DataF,LTemp,LR).
+
+compararDatas([], DataI, DataF, LTemp, Lista) :-
+  append([],LTemp,Lista).
+compararDatas([(IdServ,Data)|T], DataI, DataF, LTemp, LR) :-
+  ( ultimaDataMaiorOuIgual(DataI,DataF),
+    ultimaDataMaiorOuIgual(DataI,Data),
+    ultimaDataMaiorOuIgual(Data,DataF),
+    append(LTemp, [IdServ], LTempOut),
+    compararDatas(T,DataI,DataF,LTempOut,LR));
+  compararDatas(T,DataI,DataF,LTemp,LR).
+
+ultimaDataMaiorOuIgual((YearI-MonthI-DayI),(YearF-MonthF-DayF)) :-
+  YearI < YearF;
+  YearI =< YearF, MonthI < MonthF;
+  YearI =< YearF, MonthI =< MonthF, DayI =< DayF.
+
+datasIguais((YearI-MonthI-DayI),(YearF-MonthF-DayF)) :-
+  YearI == YearF, MonthI == MonthF, DayI == DayF.
+
+
+listarServicosCusto(Custo,LR) :-
+  solucoes(IdServ,consulta(_,_,IdServ,Custo),LR).
+
+
 
 % Identificar os utentes de um serviço/instituição; Tiago e Joel
 
@@ -226,7 +272,7 @@ servicosCidade(Cidade, R) :-
 custoUtente(utente(IdUt, _, _, _), Custo) :-
     solucoes(C, consulta(_, IdUt, _, C), Custos),
     sum(Custos, Custo).
-    
+
 custoServico(servico(IdServ, _, _, _), Custo) :-
     solucoes(C, consulta(_, _, IdServ, C), Custos),
     sum(Custos, Custo).
