@@ -209,34 +209,21 @@ listarServicosCidade(Cidade,LR) :-
 
   % Identificar serviços por Datas
 listarServicosData(Data,LR) :-
+  verificarData(Data),
   solucoes(IdServ,consulta(Data,_,IdServ,_),LR).
 
-listarServicosEntreDatas(DataI,DataI,LR) :- % se as datas forem iguais
-  listarServicosData(DataI,LR).
-
-listarServicosEntreDatas(DataI,DataF,LR) :-
-  solucoes((IdServ,Data),consulta(Data,_,IdServ,_),T),
-  compararDatas(T,DataI,DataF,LTemp,LR).
-
-compararDatas([], DataI, DataF, LTemp, Lista) :-
-  append([],LTemp,Lista).
-compararDatas([(IdServ,Data)|T], DataI, DataF, LTemp, LR) :-
-  ( ultimaDataMaiorOuIgual(DataI,DataF),
-    ultimaDataMaiorOuIgual(DataI,Data),
-    ultimaDataMaiorOuIgual(Data,DataF),
-    append(LTemp, [IdServ], LTempOut),
-    compararDatas(T,DataI,DataF,LTempOut,LR));
-  compararDatas(T,DataI,DataF,LTemp,LR).
-
-ultimaDataMaiorOuIgual((YearI-MonthI-DayI),(YearF-MonthF-DayF)) :-
-  YearI < YearF;
-  YearI =< YearF, MonthI < MonthF;
-  YearI =< YearF, MonthI =< MonthF, DayI =< DayF.
-
-datasIguais((YearI-MonthI-DayI),(YearF-MonthF-DayF)) :-
-  YearI == YearF, MonthI == MonthF, DayI == DayF.
+verificarData(Y-M-D) :-
+  integer(Y),
+  integer(M),
+  integer(D),
+  Y > 0,
+  M >= 1,
+  M =< 12,
+  D >= 1,
+  D =< 31.
 
 
+% listar serviços por custo
 listarServicosCusto(Custo,LR) :-
   solucoes(IdServ,consulta(_,_,IdServ,Custo),LR).
 
