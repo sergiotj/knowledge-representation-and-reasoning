@@ -205,12 +205,13 @@ listarServicosInstituicao(Instituicao,LR) :-
 
   % Identificar serviços por Cidade
 listarServicosCidade(Cidade,LR) :-
-  solucoes(IdServ,servico(IdServ,_,_,Cidade,_),LR).
+  solucoes(IdServ,servico(IdServ,_,_,Cidade,_),L).
 
   % Identificar serviços por Datas
 listarServicosData(Data,LR) :-
   verificarData(Data),
-  solucoes(IdServ,consulta(Data,_,IdServ,_),LR).
+  solucoes(IdServ,consulta(Data,_,IdServ,_),L),
+  removeDups(L,LR).
 
 verificarData(Y-M-D) :-
   integer(Y),
@@ -225,7 +226,8 @@ verificarData(Y-M-D) :-
 
 % listar serviços por custo
 listarServicosCusto(Custo,LR) :-
-  solucoes(IdServ,consulta(_,_,IdServ,Custo),LR).
+  solucoes(IdServ,consulta(_,_,IdServ,Custo),L),
+  removeDups(L,LR).
 
 
 
