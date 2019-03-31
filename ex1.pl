@@ -108,6 +108,9 @@ removeDups([H|T],[H|R]) :-
      solucoes(IdServ, consulta(Data, _, IdServ, _), Ids),
      comprimento(Ids, C), C =< Capacidade).
 
++consulta(Data, _, _, _) ::
+    (verificarData(Data)).
+
 % predicados evolucao e involucao, e seus auxiliares
 
 teste([]).
@@ -222,7 +225,6 @@ verificarData(Y-M-D) :-
   M =< 12,
   D >= 1,
   D =< 31.
-
 
 % listar serviços por custo
 listarServicosCusto(Custo,LR) :-
