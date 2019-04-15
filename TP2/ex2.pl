@@ -158,6 +158,23 @@ excecao(consulta(02-05-2019, 8, 5, 30)).
 % 										Evolução do Conhecimento
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+% predicado evolucao
+
+evolucao( Termo ) :-
+    solucoes( Invariante,+Termo::Invariante,Lista ),
+    insercao( Termo ),
+    teste( Lista ).
+
+insercao( Termo ) :-
+    assert( Termo ).
+insercao( Termo ) :-
+    retract( Termo ),!,fail.
+
+teste( [] ).
+teste( [R|LR] ) :-
+    R,
+    teste( LR ).
+
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
 % ----------------------------------------------------------------------------------------------------
 
