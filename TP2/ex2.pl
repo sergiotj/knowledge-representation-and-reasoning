@@ -119,9 +119,30 @@ excecao(servico(A, B, C, D, E)) :-
 excecao(utente(11,ines,23,lisboa)).
 excecao(utente(11,ines,24,lisboa)).
 
+% ----------------------------------------------------------------------------------------------------
+% Desconhece-se se o servico com id=10, serv10 do Hospital de Santa Maria no Porto tem capacidade 4 ou
+% capacidade 5
+excecao(servico(10,serv10, hsantamaria, porto, 4)).
+excecao(servico(10,serv10, hsantamaria, porto, 5)).
+
+% ----------------------------------------------------------------------------------------------------
+% Não se sabe se a consulta prestada em 25-12-2018, pelo servico com id=8 ao utente com id=3
+% teve um custo de 10€ ou um custo de 15€
+excecao(consulta(25-12-2018, 3, 8, 10) ).
+excecao(consulta(25-12-2018, 3, 8, 15) ).
+
+% ----------------------------------------------------------------------------------------------------
+% Desconhece-se se a consulta prestada pelo servico com id=5 ao utente com id=8 foi
+% no dia 01 de Abril ou no dia 02 de Abril, e se o custo foi 20€ ou 30€.
+excecao(consulta(01-04-2019, 8, 5, 20)).
+excecao(consulta(02-04-2019, 8, 5, 20)).
+excecao(consulta(01-04-2019, 8, 5, 30)).
+excecao(consulta(02-05-2019, 8, 5, 30)).
+
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % 					Representar casos de conhecimento imperfeito interdito
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % Manipular invariantes que designem restrições à inserção e à remoção de conhecimento do sistema
@@ -174,6 +195,23 @@ si(Q, desconhecido) :-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % 										Evolução do Conhecimento
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+% predicado evolucao
+
+evolucao( Termo ) :-
+    solucoes( Invariante,+Termo::Invariante,Lista ),
+    insercao( Termo ),
+    teste( Lista ).
+
+insercao( Termo ) :-
+    assert( Termo ).
+insercao( Termo ) :-
+    retract( Termo ),!,fail.
+
+teste( [] ).
+teste( [R|LR] ) :-
+    R,
+    teste( LR ).
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
 % ----------------------------------------------------------------------------------------------------
