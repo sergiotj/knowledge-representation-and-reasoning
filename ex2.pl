@@ -131,7 +131,45 @@ excecao(utente(11,ines,24,lisboa)).
 % ////////////////////////////////////// Predicados importantes //////////////////////////////////////
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-% PÔR DEMO ETC...
+
+% operadores 'e' e 'ou'
+:- op(600, 'yfx', [ e, ou ]).
+:- dynamic e/2.
+:- dynamic ou/2.
+
+% dupla negação
+si(-(-Q), R) :-
+    si(Q, R), !.
+
+% lei de De Morgan (A ou B) <=> -(-A e -B)
+si(Q1 ou Q2, R) :-
+    si(-(-Q1 e -Q2), R), !.
+
+si(Q1 e Q2, verdadeiro) :-
+    si(Q1, verdadeiro),
+    si(Q2, verdadeiro).
+si(Q1 e _, falso) :-
+    si(Q1, falso), !.
+si(_ e Q2, falso) :-
+    si(Q2, falso).
+si(Q1 e Q2, desconhecido) :-
+    si(Q1, desconhecido),
+    nao(si(Q2, falso)), !.
+si(Q1 e Q2, desconhecido) :-
+    si(Q2, desconhecido),
+    nao(si(Q1, falso)).
+
+si(Q, verdadeiro) :-
+    atomico(Q),
+    Q.
+si(Q, falso) :-
+    atomico(Q),
+    -Q.
+si(Q, desconhecido) :-
+    atomico(Q),
+    nao(Q),
+    nao(-Q).
+
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % 										Evolução do Conhecimento
@@ -169,5 +207,9 @@ removeDups([H|T],[H|R]) :-
 	nao(pertence(H,T)),
 	removeDups(T,R).
 
+atomico(Q) :-
+    Q \= _ e _,
+    Q \= _ ou _,
+    Q \= -(-_).
 
 % ////////////////////////////////////// FIM DO FICHEIRO /////////////////////////////////////////////
