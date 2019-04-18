@@ -32,6 +32,7 @@
 :- dynamic servico/4.
 :- dynamic consulta/4.
 :- dynamic excecao/1.
+:- dynamic interdito/1.
 
 % dados iniciais
 
@@ -289,6 +290,50 @@ evolucaoImpre(consulta(D,IdUt,IdServ),custo,[H|T]) :-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Evolução - Tipo Interdito
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
+% Teste de palavra interdita
+interdito(interdito).
+
+% Interdito no nome do utente
+evolucao(utente(Id,N,I,C),nome) :- 
+    evolucao(utente(Id,N,I,C)),
+    interdito(N).
+
+% Interdito na idade do utente
+evolucao(utente(Id,N,I,C),idade) :- 
+    evolucao(utente(Id,N,I,C)),
+    interdito(I).
+
+% Interdito na cidade do utente
+evolucao(utente(Id,N,I,C),cidade) :- 
+    evolucao(utente(Id,N,I,C)),
+    interdito(C).
+
+% -----
+% Interdito na descrição do serviço
+evolucao(servico(Id,D,I,C,Cap),desc) :- 
+    evolucao(servico(Id,D,I,C,Cap)),
+    interdito(D).
+
+% Interdito na instituição do serviço
+evolucao(servico(Id,D,I,C,Cap),inst) :- 
+    evolucao(servico(Id,D,I,C,Cap)),
+    interdito(I).
+
+% Interdito na cidade do serviço
+evolucao(servico(Id,D,I,C,Cap),cidade) :- 
+    evolucao(servico(Id,D,I,C,Cap)),
+    interdito(C).
+
+% -----
+% Interdito na data da consulta
+evolucao(consulta(D,IdUt,IdServ,C),data) :- 
+    evolucao(consulta(D,IdUt,IdServ,C)),
+    interdito(D).
+
+% Interdito no custo da consulta
+evolucao(consulta(D,IdUt,IdServ,C),custo) :- 
+    evolucao(consulta(D,IdUt,IdServ,C)),
+    interdito(C).
 
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
