@@ -78,12 +78,12 @@ consulta(2017-02-28,4,9,45).
 					nao(excecao(utente(Id,N,I,C))).
 
 -servico(Id,D,I,C,Cap) :-
-					nao(servico(Id,D,I,C,Cap),
-					nao(excecao(servico(Id,D,I,C,Cap)).
+					nao(servico(Id,D,I,C,Cap)),
+					nao(excecao(servico(Id,D,I,C,Cap))).
 
 -consulta(D,IdU,IdServ,C) :-
 					nao(consulta(D,IdU,IdServ,C)),
-					nao(excecao(consulta(D,IdU,IdServ,C)).
+					nao(excecao(consulta(D,IdU,IdServ,C))).
 
 % Negação explícita
 
