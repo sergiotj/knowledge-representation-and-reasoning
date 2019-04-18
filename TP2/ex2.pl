@@ -31,7 +31,7 @@
 :- dynamic idServAtual/1.
 :- dynamic servico/4.
 :- dynamic consulta/4.
-:- dynamic filho/2.
+:- dynamic excecao/1.
 
 % dados iniciais
 
@@ -197,7 +197,6 @@ si(Q, desconhecido) :-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % predicado evolucao
-
 evolucao( Termo ) :-
     solucoes( Invariante,+Termo::Invariante,Lista ),
     insercao( Termo ),
@@ -212,6 +211,85 @@ teste( [] ).
 teste( [R|LR] ) :-
     R,
     teste( LR ).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                     Evolução - Tipo Incerto
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+% Incerto no nome do utente
+evolucao(utente(Id,_,I,C),i,nome) :- evolucao(utente(Id,i,I,C)).
+
+% Incerto na idade do utente
+evolucao(utente(Id,N,_,C),i,idade) :- evolucao(utente(Id,N,i,C)).
+
+% Incerto na cidade do utente
+evolucao(utente(Id,N,I,_),i,cidade) :- evolucao(utente(Id,N,I,i)).
+
+% -----
+% Incerto na descrição do serviço
+evolucao(servico(Id,_,I,C,Cap),i,desc) :- evolucao(servico(Id,i,I,C,Cap)).
+
+% Incerto na instituição do serviço
+evolucao(servico(Id,D,_,C,Cap),i,inst) :- evolucao(servico(Id,D,i,C,Cap)).
+
+% Incerto na cidade do serviço
+evolucao(servico(Id,D,I,_,Cap),i,cidade) :- evolucao(servico(Id,D,I,i,Cap)).
+
+% -----
+% Incerto na data da consulta
+evolucao(consulta(_,IdUt,IdServ,C),i,data):- evolucao(consulta(i,IdUt,IdServ,C)).
+
+% Incerto no custo da consulta
+evolucao(consulta(D,IdUt,IdServ,_),i,custo):- evolucao(consulta(D,IdUt,IdServ,i)).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                     Evolução - Tipo Impreciso
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+evolucaoImpre(_,_,[]).
+
+% Impreciso na cidade do utente
+evolucaoImpre(utente(Id,N,I),cidade,[H|T]) :- 
+    nao(utente(Id,_,_,_)),
+    insercao(excecao(utente(Id,N,I,H))),
+    evolucaoImpre(utente(Id,N,I),cidade,T).
+
+% Impreciso na idade do utente
+evolucaoImpre(utente(Id,N,C),idade,[H|T]) :-  
+    nao(utente(Id,_,_,_)),
+    insercao(excecao(utente(Id,N,H,C))),
+    evolucaoImpre(utente(Id,N,C),idade,T).
+
+% -----
+% Impreciso na descrição do serviço
+evolucaoImpre(servico(Id,N,C,Cap),desc,[H|T]) :-  
+    nao(servico(Id,_,_,_,_)),
+    insercao(excecao(servico(Id,H,N,C,Cap))),
+    evolucaoImpre(servico(Id,N,C,Cap),desc,T).
+
+% Impreciso na cidade do serviço
+evolucaoImpre(servico(Id,D,N,Cap),cidade,[H|T]) :-  
+    nao(servico(Id,_,_,_,_)),
+    insercao(excecao(servico(Id,D,N,H,Cap))),
+    evolucaoImpre(servico(Id,D,N,Cap),cidade,T).
+
+% -----
+% Impreciso na data da consulta
+evolucaoImpre(consulta(IdUt,IdServ,C),data,[H|T]) :-  
+    nao(consulta(_,IdUt,IdServ,_)),
+    insercao(excecao(consulta(H,IdUt,IdServ,C))),
+    evolucaoImpre(consulta(IdUt,IdServ,C),data,T).
+
+% Impreciso na custo da consulta
+evolucaoImpre(consulta(D,IdUt,IdServ),custo,[H|T]) :-  
+    nao(consulta(_,IdUt,IdServ,_)),
+    insercao(excecao(consulta(D,IdUt,IdServ,H))),
+    evolucaoImpre(consulta(D,IdUt,IdServ),custo,T).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                     Evolução - Tipo Interdito
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
 % ----------------------------------------------------------------------------------------------------
