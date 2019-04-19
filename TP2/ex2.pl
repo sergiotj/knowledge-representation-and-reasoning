@@ -218,30 +218,38 @@ teste( [R|LR] ) :-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % Incerto no nome do utente
-evolucao(utente(Id,_,I,C),i,nome) :- evolucao(utente(Id,i,I,C)).
+evolucao(utente(Id,_,I,C),i,nome) :- 
+    evolucao(utente(Id,i,I,C)).
 
 % Incerto na idade do utente
-evolucao(utente(Id,N,_,C),i,idade) :- evolucao(utente(Id,N,i,C)).
+evolucao(utente(Id,N,_,C),i,idade) :- 
+    evolucao(utente(Id,N,i,C)).
 
 % Incerto na cidade do utente
-evolucao(utente(Id,N,I,_),i,cidade) :- evolucao(utente(Id,N,I,i)).
+evolucao(utente(Id,N,I,_),i,cidade) :- 
+    evolucao(utente(Id,N,I,i)).
 
 % -----
 % Incerto na descrição do serviço
-evolucao(servico(Id,_,I,C,Cap),i,desc) :- evolucao(servico(Id,i,I,C,Cap)).
+evolucao(servico(Id,_,I,C,Cap),i,desc) :- 
+    evolucao(servico(Id,i,I,C,Cap)).
 
 % Incerto na instituição do serviço
-evolucao(servico(Id,D,_,C,Cap),i,inst) :- evolucao(servico(Id,D,i,C,Cap)).
+evolucao(servico(Id,D,_,C,Cap),i,inst) :- 
+    evolucao(servico(Id,D,i,C,Cap)).
 
 % Incerto na cidade do serviço
-evolucao(servico(Id,D,I,_,Cap),i,cidade) :- evolucao(servico(Id,D,I,i,Cap)).
+evolucao(servico(Id,D,I,_,Cap),i,cidade) :- 
+    evolucao(servico(Id,D,I,i,Cap)).
 
 % -----
 % Incerto na data da consulta
-evolucao(consulta(_,IdUt,IdServ,C),i,data):- evolucao(consulta(i,IdUt,IdServ,C)).
+evolucao(consulta(_,IdUt,IdServ,C),i,data):- 
+    evolucao(consulta(i,IdUt,IdServ,C)).
 
 % Incerto no custo da consulta
-evolucao(consulta(D,IdUt,IdServ,_),i,custo):- evolucao(consulta(D,IdUt,IdServ,i)).
+evolucao(consulta(D,IdUt,IdServ,_),i,custo):- 
+    evolucao(consulta(D,IdUt,IdServ,i)).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Evolução - Tipo Impreciso
