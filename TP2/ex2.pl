@@ -153,7 +153,6 @@ excecao(consulta(02-05-2019, 8, 5, 30)).
 % ////////////////////////////////////// Predicados importantes //////////////////////////////////////
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 % operadores 'e' e 'ou'
 :- op(600, 'yfx', [ e, ou ]).
 :- dynamic e/2.
@@ -191,7 +190,6 @@ si(Q, desconhecido) :-
     atomico(Q),
     nao(Q),
     nao(-Q).
-
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % 										Evolução do Conhecimento
@@ -342,6 +340,68 @@ evolucao(consulta(D,IdUt,IdServ,C),data) :-
 evolucao(consulta(D,IdUt,IdServ,C),custo) :- 
     evolucao(consulta(D,IdUt,IdServ,C)),
     interdito(C).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+% 										Involução do Conhecimento
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+% Predicado involucao para conhecimento perfeito
+
+involucao(Termo) :-
+	nao(excecao(Termo)),
+	nao(excecaoInc(Termo)),
+	solucoes(Invariante,-Termo::Invariante, Lista),
+	teste(Lista),
+	remove(Termo).
+
+remove(Termo) :-
+    retract(Termo).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                     Involução - Tipo Incerto
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+incerto(incerto).
+
+% Incerteza na nome do utente
+excecaoInc(utente(Id,_,Idade,Cidade)) :- 
+    utente(Id,incerto,Idade,Cidade).
+
+% Incerteza na idade do utente
+excecaoInc(utente(Id,Nome,_,Cidade)) :- 
+    utente(Id,Nome,incerto,Cidade).
+
+% Incerteza na cidade do utente
+excecaoInc(utente(Id,Nome,Idade,_)) :- 
+    utente(Id,Nome,Idade,incerto).
+
+% -----
+% Incerteza na descrição do serviço
+excecaoInc(servico(Id,_,Instituicao,Cidade,Capacidade)) :- 
+    servico(Id,incerto,Instituicao,Cidade,Capacidade).
+
+% Incerteza na instituição do serviço
+excecaoInc(servico(Id,Descricao,_,Cidade,Capacidade)) :- 
+    servico(Id,Descricao,incerto,Cidade,Capacidade).
+
+% Incerteza na cidade do serviço
+excecaoInc(servico(Id,Descricao,Instituicao,_,Capacidade)) :- 
+    servico(Id,Descricao,Instituicao,incerto,Capacidade).
+
+% -----
+% Incerteza na data da consulta
+excecaoInc(consulta(_,IdUt,IdServ,Custo)) :- 
+    consulta(incerto,IdUt,IdServ,Custo).
+
+% Incerteza no custo da consulta
+excecaoInc(consulta(Data,IdUt,IdServ,_)) :- 
+    consulta(Data,IdUt,IdServ,incerto).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                     Involução - Tipo Impreciso
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                     Involução - Tipo Interdito
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
