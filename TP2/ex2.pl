@@ -40,7 +40,7 @@ idUtAtual(1).
 idServAtual(1).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 					Representaçao de conhecimento perfeito positivo
+%                   Representaçao de conhecimento perfeito positivo
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % Extensao do predicado utente: IdUt, Nome, Idade, Cidade -> {V,F,D}
@@ -69,29 +69,29 @@ consulta(2017-02-28,4,9,45).
 
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 					Representaçao de conhecimento perfeito negativo
+%                   Representaçao de conhecimento perfeito negativo
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % Definições das negações fortes (não é verdadeiro ^ não é desconhecido)
 
 -utente(Id,N,I,C) :-
-					nao(utente(Id,N,I,C)),
-					nao(excecao(utente(Id,N,I,C))).
+                    nao(utente(Id,N,I,C)),
+                    nao(excecao(utente(Id,N,I,C))).
 
 -servico(Id,D,I,C,Cap) :-
-					nao(servico(Id,D,I,C,Cap)),
-					nao(excecao(servico(Id,D,I,C,Cap))).
+                    nao(servico(Id,D,I,C,Cap)),
+                    nao(excecao(servico(Id,D,I,C,Cap))).
 
 -consulta(D,IdU,IdServ,C) :-
-					nao(consulta(D,IdU,IdServ,C)),
-					nao(excecao(consulta(D,IdU,IdServ,C))).
+                    nao(consulta(D,IdU,IdServ,C)),
+                    nao(excecao(consulta(D,IdU,IdServ,C))).
 
 % Negação explícita
 
 -utente(32,joaquim,65,braganca).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 					Representar casos de conhecimento imperfeito incerto
+%                   Representar casos de conhecimento imperfeito incerto
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % ----------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ consulta(2017-02-28,4,9,45).
 utente(15, margarida, 19, i1).
 
 excecao(utente(A,B,C,D)) :-
-	utente(A,B,C,i1).
+    utente(A,B,C,i1).
 
 % ----------------------------------------------------------------------------------------------------
 % Não se sabe qual a descrição do serviço 11 e a sua capacidade, que é o hospital da covilhã.
@@ -108,10 +108,10 @@ excecao(utente(A,B,C,D)) :-
 servico(11, i2, hospitalcovilha, covilha, i3).
 
 excecao(servico(A, B, C, D, E)) :-
-	servico(A, i2, C, D, i3).
+    servico(A, i2, C, D, i3).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 					Representar casos de conhecimento imperfeito impreciso
+%                   Representar casos de conhecimento imperfeito impreciso
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % ----------------------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ excecao(consulta(01-04-2019, 8, 5, 30)).
 excecao(consulta(02-05-2019, 8, 5, 30)).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 					Representar casos de conhecimento imperfeito interdito
+%                   Representar casos de conhecimento imperfeito interdito
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -192,7 +192,7 @@ si(Q, desconhecido) :-
     nao(-Q).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 										Evolução do Conhecimento
+%                                       Evolução do Conhecimento
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % predicado evolucao
@@ -342,19 +342,27 @@ evolucao(consulta(D,IdUt,IdServ,C),custo) :-
     interdito(C).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-% 										Involução do Conhecimento
+%                                       Involução do Conhecimento
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 % Predicado involucao para conhecimento perfeito
-
 involucao(Termo) :-
-	nao(excecao(Termo)),
-	nao(excecaoInc(Termo)),
-	solucoes(Invariante,-Termo::Invariante, Lista),
-	teste(Lista),
-	remove(Termo).
+    nao(excecao(Termo)),
+    nao(excecaoInc(Termo)),
+    solucoes(Invariante,-Termo::Invariante, Lista),
+    remove(Termo),
+    teste(Lista).
 
-remove(Termo) :-
-    retract(Termo).
+remove(T) :-
+    retract(T).
+remove(T) :-
+    assert(T), !, fail.
+
+retrocesso(T) :-
+    T,
+    remove(T),
+    solucoes(I, -T::I, LInv),
+    teste(LInv), !.
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Incerto
@@ -399,10 +407,58 @@ excecaoInc(consulta(Data,IdUt,IdServ,_)) :-
 %                                     Involução - Tipo Impreciso
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+% Predicado involucao para conhecimento incerto e impreciso
+involucaoII(Termo) :-
+    excecao(Termo),
+    solucoes(Invariante,-Termo::Invariante, Lista),
+    remove(excecao(Termo)),
+    teste(Lista).
+
+impreciso(impreciso).
+
+% Conhecimento impreciso na nome do utente
+excecaoInc(utente(Id,_,Idade,Cidade)) :- 
+    utente(Id,impreciso,Idade,Cidade).
+
+% Conhecimento impreciso na idade do utente
+excecaoInc(utente(Id,Nome,_,Cidade)) :- 
+    utente(Id,Nome,impreciso,Cidade).
+
+% Conhecimento impreciso na cidade do utente
+excecaoInc(utente(Id,Nome,Idade,_)) :- 
+    utente(Id,Nome,Idade,impreciso).
+
+% -----
+% Conhecimento impreciso na descrição do serviço
+excecaoInc(servico(Id,_,Instituicao,Cidade,Capacidade)) :- 
+    servico(Id,impreciso,Instituicao,Cidade,Capacidade).
+
+% Conhecimento impreciso na instituição do serviço
+excecaoInc(servico(Id,Descricao,_,Cidade,Capacidade)) :- 
+    servico(Id,Descricao,impreciso,Cidade,Capacidade).
+
+% Conhecimento impreciso na cidade do serviço
+excecaoInc(servico(Id,Descricao,Instituicao,_,Capacidade)) :- 
+    servico(Id,Descricao,Instituicao,impreciso,Capacidade).
+
+% -----
+% Conhecimento impreciso na data da consulta
+excecaoInc(consulta(_,IdUt,IdServ,Custo)) :- 
+    consulta(impreciso,IdUt,IdServ,Custo).
+
+% Conhecimento impreciso no custo da consulta
+excecaoInc(consulta(Data,IdUt,IdServ,_)) :- 
+    consulta(Data,IdUt,IdServ,impreciso).
+
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Interdito
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+involucaoInterdito(Termo) :-
+    excecaoInc(Termo),
+    solucoes(Invariante,-Termo::Invariante, Lista),
+    remove(Termo),
+    teste(Lista).
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
 % ----------------------------------------------------------------------------------------------------
@@ -430,11 +486,11 @@ solucoes(F, Q, R) :-
 
 removeDups([],[]).
 removeDups([H|T],R) :-
-	pertence(H,T),
-	removeDups(T,R).
+    pertence(H,T),
+    removeDups(T,R).
 removeDups([H|T],[H|R]) :-
-	nao(pertence(H,T)),
-	removeDups(T,R).
+    nao(pertence(H,T)),
+    removeDups(T,R).
 
 atomico(Q) :-
     Q \= _ e _,
