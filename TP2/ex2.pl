@@ -427,24 +427,10 @@ involucao(Termo) :-
     retrocesso(Termo),
     teste(Lista).
 
-retrocesso(T) :-
-    T,
-    remove(T),
-    solucoes(I, -T::I, LInv),
-    teste(LInv), !.
-
-remove(T) :-
-    retract(T).
-remove(T) :-
-    assert(T), !, fail.
-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-%                                     Involução - Tipo Incerto
+%                                     Involução - Tipo Incerto e Impreciso
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-% ////////////////////////////////////////////////////////////////////////////////////////////////////
-%                                     Involução - Tipo Impreciso
-% ////////////////////////////////////////////////////////////////////////////////////////////////////
 % Predicado involucao para conhecimento incerto e impreciso para utentes
 involucaoIIUtente(Termo) :-
     excecaoInc(Termo),
@@ -454,7 +440,7 @@ involucaoIIUtente(Termo) :-
     removeListas(List),
     teste(Lista).
 
-getexcecoesU(utente(Id,Nome,Idade,Morada),excecaoInc(utente(IdUt,_,_,_))) :- 
+getexcecoesU(utente(Id,Nome,Idade,Morada),excecaoInc(utente(IdUt,_,_,_))) :-
     IdUt = Id,
     excecaoInc(utente(IdUt,_,_,_)).
 
@@ -467,7 +453,7 @@ involucaoIIServico(Termo) :-
     removeListas(List),
     teste(Lista).
 
-getexcecoesS(servico(IdServ,Descricao,Instituicao,Cidade,Capacidade),excecaoInc(servico(IdServico,_,_,_,_))) :- 
+getexcecoesS(servico(IdServ,Descricao,Instituicao,Cidade,Capacidade),excecaoInc(servico(IdServico,_,_,_,_))) :-
     IdServico = IdServ,
     excecaoInc(servico(IdServico,_,_,_,_)).
 
@@ -482,11 +468,6 @@ involucaoIIConsulta(Termo) :-
 
 getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
     excecaoInc(consulta(Data,_,_,_)).
-
-removeListas([]).
-removeListas([H|T]) :-
-    retrocesso(H),
-    removeListas(T).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Interdito
@@ -529,6 +510,22 @@ removeDups([H|T],R) :-
 removeDups([H|T],[H|R]) :-
     nao(pertence(H,T)),
     removeDups(T,R).
+
+retrocesso(T) :-
+    T,
+    remove(T),
+    solucoes(I, -T::I, LInv),
+    teste(LInv), !.
+
+remove(T) :-
+    retract(T).
+remove(T) :-
+    assert(T), !, fail.
+
+removeListas([]).
+removeListas([H|T]) :-
+    retrocesso(H),
+    removeListas(T).
 
 atomico(Q) :-
     Q \= _ e _,
