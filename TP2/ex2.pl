@@ -33,6 +33,8 @@
 :- dynamic consulta/4.
 :- dynamic excecao/1.
 :- dynamic interdito/1.
+:- dynamic excecaoInc/1.
+:- dynamic incerto/1.
 
 % dados iniciais
 
@@ -76,15 +78,18 @@ consulta(2017-02-28,4,9,45).
 
 -utente(Id,N,I,C) :-
                     nao(utente(Id,N,I,C)),
-                    nao(excecao(utente(Id,N,I,C))).
+                    nao(excecao(utente(Id,N,I,C))),
+                    nao(excecaoInc(utente(Id,N,I,C))).
 
 -servico(Id,D,I,C,Cap) :-
                     nao(servico(Id,D,I,C,Cap)),
-                    nao(excecao(servico(Id,D,I,C,Cap))).
+                    nao(excecao(servico(Id,D,I,C,Cap))),
+                    nao(excecaoInc(servico(Id,D,I,C,Cap))).
 
 -consulta(D,IdU,IdServ,C) :-
                     nao(consulta(D,IdU,IdServ,C)),
-                    nao(excecao(consulta(D,IdU,IdServ,C))).
+                    nao(excecao(consulta(D,IdU,IdServ,C))),
+                    nao(excecaoInc(consulta(D,IdU,IdServ,C))).
 
 % Negação explícita
 
@@ -99,7 +104,7 @@ consulta(2017-02-28,4,9,45).
 
 utente(15, margarida, 19, i1).
 
-excecao(utente(A,B,C,D)) :-
+excecaoInc(utente(A,B,C,D)) :-
     utente(A,B,C,i1).
 
 % ----------------------------------------------------------------------------------------------------
@@ -107,7 +112,7 @@ excecao(utente(A,B,C,D)) :-
 
 servico(11, i2, hospitalcovilha, covilha, i3).
 
-excecao(servico(A, B, C, D, E)) :-
+excecaoInc(servico(A, B, C, D, E)) :-
     servico(A, i2, C, D, i3).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,28 +122,28 @@ excecao(servico(A, B, C, D, E)) :-
 % ----------------------------------------------------------------------------------------------------
 % Não se sabe se a utente com id=11, com o nome Inês, residente na cidade de Lisboa, tem 23 ou 24 anos.
 
-excecao(utente(11,ines,23,lisboa)).
-excecao(utente(11,ines,24,lisboa)).
+excecaoInc(utente(11,ines,23,lisboa)).
+excecaoInc(utente(11,ines,24,lisboa)).
 
 % ----------------------------------------------------------------------------------------------------
 % Desconhece-se se o servico com id=10, serv10 do Hospital de Santa Maria no Porto tem capacidade 4 ou
 % capacidade 5
-excecao(servico(10,serv10, hsantamaria, porto, 4)).
-excecao(servico(10,serv10, hsantamaria, porto, 5)).
+excecaoInc(servico(10,serv10, hsantamaria, porto, 4)).
+excecaoInc(servico(10,serv10, hsantamaria, porto, 5)).
 
 % ----------------------------------------------------------------------------------------------------
 % Não se sabe se a consulta prestada em 25-12-2018, pelo servico com id=8 ao utente com id=3
 % teve um custo de 10€ ou um custo de 15€
-excecao(consulta(25-12-2018, 3, 8, 10) ).
-excecao(consulta(25-12-2018, 3, 8, 15) ).
+excecaoInc(consulta(25-12-2018, 3, 8, 10) ).
+excecaoInc(consulta(25-12-2018, 3, 8, 15) ).
 
 % ----------------------------------------------------------------------------------------------------
 % Desconhece-se se a consulta prestada pelo servico com id=5 ao utente com id=8 foi
 % no dia 01 de Abril ou no dia 02 de Abril, e se o custo foi 20€ ou 30€.
-excecao(consulta(01-04-2019, 8, 5, 20)).
-excecao(consulta(02-04-2019, 8, 5, 20)).
-excecao(consulta(01-04-2019, 8, 5, 30)).
-excecao(consulta(02-05-2019, 8, 5, 30)).
+excecaoInc(consulta(01-04-2019, 8, 5, 20)).
+excecaoInc(consulta(02-04-2019, 8, 5, 20)).
+excecaoInc(consulta(01-04-2019, 8, 5, 30)).
+excecaoInc(consulta(02-05-2019, 8, 5, 30)).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                   Representar casos de conhecimento imperfeito interdito
@@ -146,7 +151,7 @@ excecao(consulta(02-05-2019, 8, 5, 30)).
 
 % ----------------------------------------------------------------------------------------------------
 % Não se pode saber qual o IdUt da consulta realizada em 2019-01-30, prestada pelo serviço com id = 3
-$ com o custo 25€
+% com o custo 25€
 
 consulta(2019-01-30, i5, 3, 25).
 excecao(consulta(A, B, C, D)) :-
@@ -446,9 +451,9 @@ excecaoInc(consulta(Data,IdUt,IdServ,_)) :-
 
 % Predicado involucao para conhecimento incerto e impreciso
 involucaoII(Termo) :-
-    excecao(Termo),
+    excecaoInc(Termo),
     solucoes(Invariante,-Termo::Invariante, Lista),
-    remove(excecao(Termo)),
+    remove(excecaoInc(Termo)),
     teste(Lista).
 
 impreciso(impreciso).
