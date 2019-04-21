@@ -101,7 +101,7 @@ consulta(2017-02-28,4,9,45).
 
 % ----------------------------------------------------------------------------------------------------
 % Desconhece-se a cidade do utente com o id=15, que é a Margarida com 19 anos.
-
+    
 utente(15, margarida, 19, i1).
 
 excecaoInc(utente(A,B,C,D)) :-
@@ -122,7 +122,7 @@ excecaoInc(servico(A, B, C, D, E)) :-
 % ----------------------------------------------------------------------------------------------------
 % Não se sabe se a utente com id=11, com o nome Inês, residente na cidade de Lisboa, tem 23 ou 24 anos.
 
-excecaoInc(utente(11,ines,23,lisboa)).
+excecaoInc(utente(11,ines,23,lisboa) ).
 excecaoInc(utente(11,ines,24,lisboa)).
 
 % ----------------------------------------------------------------------------------------------------
@@ -392,13 +392,8 @@ involucao(Termo) :-
     nao(excecao(Termo)),
     nao(excecaoInc(Termo)),
     solucoes(Invariante,-Termo::Invariante, Lista),
-    remove(Termo),
+    retrocesso(Termo),
     teste(Lista).
-
-remove(T) :-
-    retract(T).
-remove(T) :-
-    assert(T), !, fail.
 
 retrocesso(T) :-
     T,
@@ -406,91 +401,60 @@ retrocesso(T) :-
     solucoes(I, -T::I, LInv),
     teste(LInv), !.
 
+remove(T) :-
+    retract(T).
+remove(T) :-
+    assert(T), !, fail.
+
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Incerto
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-incerto(incerto).
-
-% Incerteza na nome do utente
-excecaoInc(utente(Id,_,Idade,Cidade)) :-
-    utente(Id,incerto,Idade,Cidade).
-
-% Incerteza na idade do utente
-excecaoInc(utente(Id,Nome,_,Cidade)) :-
-    utente(Id,Nome,incerto,Cidade).
-
-% Incerteza na cidade do utente
-excecaoInc(utente(Id,Nome,Idade,_)) :-
-    utente(Id,Nome,Idade,incerto).
-
-% -----
-% Incerteza na descrição do serviço
-excecaoInc(servico(Id,_,Instituicao,Cidade,Capacidade)) :-
-    servico(Id,incerto,Instituicao,Cidade,Capacidade).
-
-% Incerteza na instituição do serviço
-excecaoInc(servico(Id,Descricao,_,Cidade,Capacidade)) :-
-    servico(Id,Descricao,incerto,Cidade,Capacidade).
-
-% Incerteza na cidade do serviço
-excecaoInc(servico(Id,Descricao,Instituicao,_,Capacidade)) :-
-    servico(Id,Descricao,Instituicao,incerto,Capacidade).
-
-% -----
-% Incerteza na data da consulta
-excecaoInc(consulta(_,IdUt,IdServ,Custo)) :-
-    consulta(incerto,IdUt,IdServ,Custo).
-
-% Incerteza no custo da consulta
-excecaoInc(consulta(Data,IdUt,IdServ,_)) :-
-    consulta(Data,IdUt,IdServ,incerto).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Impreciso
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-% Predicado involucao para conhecimento incerto e impreciso
-involucaoII(Termo) :-
+% Predicado involucao para conhecimento incerto e impreciso para utentes
+involucaoIIUtente(Termo) :-
     excecaoInc(Termo),
     solucoes(Invariante,-Termo::Invariante, Lista),
-    remove(excecaoInc(Termo)),
+    getexcecoesU(Termo,X),
+    solucoes(X,X,List),
+    removeListas(List),
     teste(Lista).
 
-impreciso(impreciso).
+getexcecoesU(utente(Id,Nome,Idade,Morada),excecaoInc(utente(IdUt,_,_,_))) :- 
+    IdUt = Id,
+    excecaoInc(utente(IdUt,_,_,_)).
 
-% Conhecimento impreciso na nome do utente
-excecaoInc(utente(Id,_,Idade,Cidade)) :-
-    utente(Id,impreciso,Idade,Cidade).
+% Predicado involucao para conhecimento incerto e impreciso para serviços
+involucaoIIServico(Termo) :-
+    excecaoInc(Termo),
+    solucoes(Invariante,-Termo::Invariante, Lista),
+    getexcecoesS(Termo,X),
+    solucoes(X,X,List),
+    removeListas(List),
+    teste(Lista).
 
-% Conhecimento impreciso na idade do utente
-excecaoInc(utente(Id,Nome,_,Cidade)) :-
-    utente(Id,Nome,impreciso,Cidade).
+getexcecoesS(servico(IdServ,Descricao,Instituicao,Cidade,Capacidade),excecaoInc(servico(IdServico,_,_,_,_))) :- 
+    IdServico = IdServ,
+    excecaoInc(servico(IdServico,_,_,_,_)).
 
-% Conhecimento impreciso na cidade do utente
-excecaoInc(utente(Id,Nome,Idade,_)) :-
-    utente(Id,Nome,Idade,impreciso).
+% Predicado involucao para conhecimento incerto e impreciso para consultas
+involucaoIIConsulta(Termo) :-
+    excecaoInc(Termo),
+    solucoes(Invariante,-Termo::Invariante, Lista),
+    getexcecoesC(Termo,X),
+    solucoes(X,X,List),
+    removeListas(List),
+    teste(Lista).
 
-% -----
-% Conhecimento impreciso na descrição do serviço
-excecaoInc(servico(Id,_,Instituicao,Cidade,Capacidade)) :-
-    servico(Id,impreciso,Instituicao,Cidade,Capacidade).
+getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
+    excecaoInc(consulta(Data,_,_,_)).
 
-% Conhecimento impreciso na instituição do serviço
-excecaoInc(servico(Id,Descricao,_,Cidade,Capacidade)) :-
-    servico(Id,Descricao,impreciso,Cidade,Capacidade).
-
-% Conhecimento impreciso na cidade do serviço
-excecaoInc(servico(Id,Descricao,Instituicao,_,Capacidade)) :-
-    servico(Id,Descricao,Instituicao,impreciso,Capacidade).
-
-% -----
-% Conhecimento impreciso na data da consulta
-excecaoInc(consulta(_,IdUt,IdServ,Custo)) :-
-    consulta(impreciso,IdUt,IdServ,Custo).
-
-% Conhecimento impreciso no custo da consulta
-excecaoInc(consulta(Data,IdUt,IdServ,_)) :-
-    consulta(Data,IdUt,IdServ,impreciso).
+removeListas([]).
+removeListas([H|T]) :-
+    retrocesso(H),
+    removeListas(T).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Interdito
@@ -499,7 +463,7 @@ excecaoInc(consulta(Data,IdUt,IdServ,_)) :-
 involucaoInterdito(Termo) :-
     excecaoInc(Termo),
     solucoes(Invariante,-Termo::Invariante, Lista),
-    remove(Termo),
+    retrocesso(Termo),
     teste(Lista).
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
