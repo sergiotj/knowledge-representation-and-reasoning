@@ -38,30 +38,30 @@
 
 % dados iniciais
 
-idUtAtual(1).
-idServAtual(1).
+idUtAtual(6).
+idServAtual(10).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                   Representaçao de conhecimento perfeito positivo
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % Extensao do predicado utente: IdUt, Nome, Idade, Cidade -> {V,F,D}
-utente(rosalina,34,braga).
-utente(maria,23,porto).
-utente(jose,23,lisboa).
-utente(joana,24,braga).
-utente(joao,45,coimbra).
+utente(1,rosalina,34,braga).
+utente(2,maria,23,porto).
+utente(3,jose,23,lisboa).
+utente(4,joana,24,braga).
+utente(5,joao,45,coimbra).
 
 % Extensao do predicado servico: IdServ, Descricao, Instituicao, Cidade, Capacidade -> {V,F,D}
-servico(serv1, csjoane      , guimaraes, 3).
-servico(serv2, hospitalbraga, braga    , 7).
-servico(serv3, hospitalluz  , braga    , 4).
-servico(serv4, hospitalluz  , guimaraes, 5).
-servico(serv5, uhfamalicao  , famalicao, 2).
-servico(serv6, hsantamaria  , porto    , 3).
-servico(serv7, htrofa       , braga    , 1).
-servico(serv8, htrofa       , braga    , 6).
-servico(serv9, hospitalbraga, braga    , 3).
+servico(1,serv1, csjoane      , guimaraes, 3).
+servico(2,serv2, hospitalbraga, braga    , 7).
+servico(3,serv3, hospitalluz  , braga    , 4).
+servico(4,serv4, hospitalluz  , guimaraes, 5).
+servico(5,serv5, uhfamalicao  , famalicao, 2).
+servico(6,serv6, hsantamaria  , porto    , 3).
+servico(7,serv7, htrofa       , braga    , 1).
+servico(8,serv8, htrofa       , braga    , 6).
+servico(9,serv9, hospitalbraga, braga    , 3).
 
 % Extensao do predicado consulta: Data, IdUt, IdServ, Custo -> {V,F,D}
 consulta(2015-11-20,1,2,22).
@@ -243,6 +243,35 @@ nextIdServ(Id) :-
     Id2 is Id + 1,
     evolucao(idServAtual(Id2)).
 
+teste( [] ).
+teste( [R|LR] ) :-
+    R,
+    teste( LR ).
+
+excecaoInc(utente(Id,Nome,Idade,Cidade)) :-
+    utente(Id,incerto,Idade,Cidade).
+
+excecaoInc(utente(Id,Nome,Idade,Cidade)) :-
+    utente(Id,Nome,incerto,Cidade).
+
+excecaoInc(utente(Id,Nome,Idade,Cidade)) :-
+    utente(Id,Nome,Idade,incerto).
+
+excecaoInc(servico(Id,Descricao,Instituicao,Cidade,Cap)) :-
+    utente(Id,incerto,Instituicao,Cidade,Cap).
+
+excecaoInc(servico(Id,Descricao,Instituicao,Cidade,Cap)) :-
+    utente(Id,Descricao,incerto,Cap).
+
+excecaoInc(servico(Id,Descricao,Instituicao,Cidade,Cap)) :-
+    utente(Id,Descricao,Instituicao,incerto,Cap).
+
+excecaoInc(consulta(Data,IdUt,IdServ,Custo)) :-
+    consulta(incerto,IdUt,IdServ,Custo).
+
+excecaoInc(consulta(Data,IdUt,IdServ,Custo)) :-
+    consulta(Data,IdUt,IdServ,incerto).
+
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                       Evolução do Conhecimento
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,54 +287,49 @@ insercao( Termo ) :-
 insercao( Termo ) :-
     retract( Termo ),!,fail.
 
-teste( [] ).
-teste( [R|LR] ) :-
-    R,
-    teste( LR ).
-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Evolução - Tipo Incerto
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % Incerto no nome do utente
-evolucao(utente(_,I,C),i,nome) :-
+evolucao(utente(_,I,C),incerto,nome) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(utente(Id,i,I,C))).
+    evolucao(excecaoInc(utente(Id,incerto,I,C))).
 
 % Incerto na idade do utente
-evolucao(utente(N,_,C),i,idade) :-
+evolucao(utente(N,_,C),incerto,idade) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(utente(Id,N,i,C))).
+    evolucao(excecaoInc(utente(Id,N,incerto,C))).
 
 % Incerto na cidade do utente
-evolucao(utente(N,I,_),i,cidade) :-
+evolucao(utente(N,I,_),incerto,cidade) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(utente(Id,N,I,i))).
+    evolucao(excecaoInc(utente(Id,N,I,incerto))).
 
 % -----
 % Incerto na descrição do serviço
-evolucao(servico(_,I,C,Cap),i,desc) :-
+evolucao(servico(_,I,C,Cap),incerto,desc) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(servico(Id,i,I,C,Cap))).
+    evolucao(excecaoInc(servico(Id,incerto,I,C,Cap))).
 
 % Incerto na instituição do serviço
-evolucao(servico(D,_,C,Cap),i,inst) :-
+evolucao(servico(D,_,C,Cap),incerto,inst) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(servico(Id,D,i,C,Cap))).
+    evolucao(excecaoInc(servico(Id,D,incerto,C,Cap))).
 
 % Incerto na cidade do serviço
-evolucao(servico(D,I,_,Cap),i,cidade) :-
+evolucao(servico(D,I,_,Cap),incerto,cidade) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(servico(Id,D,I,i,Cap))).
+    evolucao(excecaoInc(servico(Id,D,I,incerto,Cap))).
 
 % -----
 % Incerto na data da consulta
-evolucao(consulta(_,IdUt,IdServ,C),i,data):-
-    evolucao(excecaoInc(consulta(i,IdUt,IdServ,C))).
+evolucao(consulta(_,IdUt,IdServ,C),incerto,data):-
+    evolucao(excecaoInc(consulta(incerto,IdUt,IdServ,C))).
 
 % Incerto no custo da consulta
-evolucao(consulta(D,IdUt,IdServ,_),i,custo):-
-    evolucao(excecaoInc(consulta(D,IdUt,IdServ,i))).
+evolucao(consulta(D,IdUt,IdServ,_),incerto,custo):-
+    evolucao(excecaoInc(consulta(D,IdUt,IdServ,incerto))).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Evolução - Tipo Impreciso
@@ -317,7 +341,12 @@ evolucaoImpre(_,_,[]).
 evolucaoImpre(utente(N,I),cidade,[H|T]) :-
     nextIdUt(Id),
     insercao(excecaoInc(utente(Id,N,I,H))),
-    evolucaoImpre(utente(Id,N,I),cidade,T).
+    evoUtentesCidade(utente(Id,N,I),cidade,T).
+
+evoUtentesCidade(utente(Id,N,I,_),[H|T]) :-
+    evolucao(excecaoInc(utente(Id,N,I,H))),
+    evoUtentesCidade(utente(Id,N,I),T).
+
 
 % Impreciso na idade do utente
 evolucaoImpre(utente(N,C),idade,[H|T]) :-
