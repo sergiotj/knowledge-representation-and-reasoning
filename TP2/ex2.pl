@@ -168,14 +168,14 @@ nulointerdito(i5).
 % ----------------------------------------------------------------------------------------------------
 % Nunca se poderá saber qual a capacidade, a partir do serviço com id = 15, que corresponde ao servico
 % com descricao serv15, do hospitallisboa, na cidade de Lisboa
-servico(serv15, hospitallisboa, lisboa, i6).
+servico(15, serv15, hospitallisboa, lisboa, i6).
 
-excecao(servico(A, B, C, D)) :-
-	servico(A, B, C, i6).
+excecao(servico(A, B, C, D, E)) :-
+	servico(A, B, C, D, i6).
 nulointerdito(i6).
 +servico(A, B, C, D) :: ( solucoes(
-                                    (A, B, C, Interdito),
-                                    (servico(serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))),
+                                    (A, B, C, D, Interdito),
+                                    (servico(15, serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))),
                                     List
                         ),
                         comprimento(List, N),
