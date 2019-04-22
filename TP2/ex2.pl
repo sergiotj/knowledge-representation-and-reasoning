@@ -19,7 +19,6 @@
 :- dynamic '+'/1.
 :- dynamic '::'/2.
 
-
 % descrição da estrutura do conhecimento
 
 %utente(IdUt, Nome, Idade, Cidade).
@@ -458,7 +457,7 @@ involucaoIIConsulta(Termo) :-
     teste(Lista).
 
 getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
-    excecaoInc(consulta(Data,_,_,_)).
+    excecaoInc(consulta(Data,IdUt,_,_)).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Interdito
