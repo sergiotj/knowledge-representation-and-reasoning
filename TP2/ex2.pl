@@ -100,7 +100,7 @@ consulta(2017-02-28,4,9,45).
 
 % ----------------------------------------------------------------------------------------------------
 % Desconhece-se a cidade do utente com o id=15, que é a Margarida com 19 anos.
-    
+
 utente(15, margarida, 19, i1).
 
 excecaoInc(utente(A,B,C,D)) :-
@@ -154,7 +154,7 @@ excecaoInc(consulta(02-05-2019, 8, 5, 30)).
 
 consulta(2019-01-30, i5, 3, 25).
 excecao(consulta(A, B, C, D)) :-
-	cuidado(A, i5, C, D).
+	consulta(A, i5, C, D).
 nulointerdito(i5).
 +consulta(A, B, C, D) ::    (solucoes(
                                         (A, Interdito, C, D),
@@ -166,10 +166,6 @@ nulointerdito(i5).
                  		  	).
 
 % ----------------------------------------------------------------------------------------------------
-% Nunca se poderá saber, a partir do recibo com id=4, em que instituição foi prestado um peeling químico,
-% na área da dermatologia, ao utente com id=7 e intitulado Marta, em 04-12-2017, com o custo de 30€.
-recibo( 4, 7, marta, guimaraes, dermatologia, i6, 04-12-2017, peelingquimico, 30 ).
-
 % Nunca se poderá saber qual a capacidade, a partir do serviço com id = 15, que corresponde ao servico
 % com descricao serv15, do hospitallisboa, na cidade de Lisboa
 servico(serv15, hospitallisboa, lisboa, i6).
@@ -177,7 +173,7 @@ servico(serv15, hospitallisboa, lisboa, i6).
 excecao(servico(A, B, C, D)) :-
 	servico(A, B, C, i6).
 nulointerdito(i6).
-+recibo(A, B, C, D) :: ( solucoes(
++servico(A, B, C, D) :: ( solucoes(
                                     (A, B, C, Interdito),
                                     (servico(serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))),
                                     List
