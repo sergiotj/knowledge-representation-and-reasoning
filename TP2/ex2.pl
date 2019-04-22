@@ -173,7 +173,7 @@ servico(15, serv15, hospitallisboa, lisboa, i6).
 excecao(servico(A, B, C, D, E)) :-
 	servico(A, B, C, D, i6).
 nulointerdito(i6).
-+servico(A, B, C, D) :: ( solucoes(
++servico(A, B, C, D, E) :: ( solucoes(
                                     (A, B, C, D, Interdito),
                                     (servico(15, serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))),
                                     List
