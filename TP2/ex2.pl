@@ -28,7 +28,7 @@
 :- dynamic idUtAtual/1.
 :- dynamic utente/4.
 :- dynamic idServAtual/1.
-:- dynamic servico/4.
+:- dynamic servico/5.
 :- dynamic consulta/4.
 :- dynamic excecao/1.
 :- dynamic interdito/1.
@@ -185,6 +185,56 @@ nulointerdito(i6).
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % Manipular invariantes que designem restrições à inserção e à remoção de conhecimento do sistema
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+% Inserção:
+%% Não permitir dois utentes com o mesmo ID
+
++utente(Id,Nome,I,C) :: (solucoes( Id, (utente(Id, _, _, _)), S ),
+                      comprimento( S,N ),
+				              N == 1).
+
+%% Não permitir dois serviços com o mesmo ID;
+%% não permitir dois serviços com a mesma descrição no mesmo hospital.
+
++servico(Id,D,I,C,Cap) :: (solucoes( Id, (servico(Id, _, _, _, _)), S1 ),
+                           comprimento( S1,N1 ),
+     				               N1 == 1,
+                           solucoes( (Id,D,I), (servico(_, D, I, _, _)), S2 ),
+                           comprimento( S2,N2 ),
+ 				                   N2 == 1).
+
+
+%% Não permitir duas consultas com o mesmo IdU e IdServ na mesma data;
+%% não permitir uma consulta com um IdU não existente;
+%% não permitir uma consulta com um IdServ não existente.
+
++consulta(D,IdU,IdServ,C) :: (solucoes( (D,IdU,IdServ), (consulta(D, IdU, IdServ, _)), S1 ),
+                              comprimento( S1,N1 ),
+        				              N1 == 1,
+                              solucoes( IdU, (utente(IdU, _, _, _)), S2 ),
+                              comprimento( S2,N2 ),
+        				              N2 == 1,
+                              solucoes( IdServ, (servico(IdServ, _, _, _, _)), S3 ),
+                              comprimento( S3,N3 ),
+  				                    N3 == 1).
+
+
+% Remoção:
+%% Não permitir remover um utente que tenha consultas associadas.
+
+-utente(Id,Nome,I,C) :: (solucoes( IdServ, (consulta(_, Id, IdServ, _)), S ),
+                        comprimento( S,N ),
+  				              N == 0).
+
+
+%% Não permitir remover um serviço que tenha consultas associadas.
+
+
+-servico(Id,D,I,C,Cap) :: (solucoes( Data, (consulta(Data, IdU, Id, _)), S ),
+                          comprimento( S,N ),
+    				              N == 0).
+
+%% Não há restrições à remoção de consultas.
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % ////////////////////////////////////// Predicados importantes //////////////////////////////////////
