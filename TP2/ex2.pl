@@ -338,31 +338,26 @@ evolucao(consulta(D,IdUt,IdServ,_),incerto,custo):-
 evolucaoImpre(_,_,[]).
 
 % Impreciso na cidade do utente
-evolucaoImpre(utente(N,I),cidade,[H|T]) :-
+evolucaoImpre(utente(_,N,I),cidade,[H|T]) :-
     nextIdUt(Id),
     insercao(excecaoInc(utente(Id,N,I,H))),
-    evoUtentesCidade(utente(Id,N,I),cidade,T).
-
-evoUtentesCidade(utente(Id,N,I,_),[H|T]) :-
-    evolucao(excecaoInc(utente(Id,N,I,H))),
-    evoUtentesCidade(utente(Id,N,I),T).
-
+    evolucaoImpre(utente(Id,N,I),cidade,T).
 
 % Impreciso na idade do utente
-evolucaoImpre(utente(N,C),idade,[H|T]) :-
+evolucaoImpre(utente(_,N,C),idade,[H|T]) :-
     nextIdUt(Id),
     insercao(excecaoInc(utente(Id,N,H,C))),
     evolucaoImpre(utente(Id,N,C),idade,T).
 
 % -----
 % Impreciso na descrição do serviço
-evolucaoImpre(servico(N,C,Cap),desc,[H|T]) :-
+evolucaoImpre(servico(_,N,C,Cap),desc,[H|T]) :-
     nextIdUt(Id),
     insercao(excecaoInc(servico(Id,H,N,C,Cap))),
     evolucaoImpre(servico(Id,N,C,Cap),desc,T).
 
 % Impreciso na cidade do serviço
-evolucaoImpre(servico(D,N,Cap),cidade,[H|T]) :-
+evolucaoImpre(servico(_,D,N,Cap),cidade,[H|T]) :-
     nextIdUt(Id),
     nao(servico(Id,_,_,_,_)),
     insercao(excecaoInc(servico(Id,D,N,H,Cap))),
