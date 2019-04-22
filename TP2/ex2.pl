@@ -137,12 +137,12 @@ excecaoInc(consulta(25-12-2018, 3, 8, 10) ).
 excecaoInc(consulta(25-12-2018, 3, 8, 15) ).
 
 % ----------------------------------------------------------------------------------------------------
-% Desconhece-se se a consulta prestada pelo servico com id=5 ao utente com id=8 foi
-% no dia 01 de Abril ou no dia 02 de Abril, e se o custo foi 20€ ou 30€.
+% Desconhece-se se a consulta no dia 1 de Abril ao utente com id=8 foi
+% prestada pelo servico com id = 5 ou pelo servico com id = 7, e se o custo foi 20€ ou 30€.
 excecaoInc(consulta(01-04-2019, 8, 5, 20)).
-excecaoInc(consulta(02-04-2019, 8, 5, 20)).
+excecaoInc(consulta(02-04-2019, 8, 7, 20)).
 excecaoInc(consulta(01-04-2019, 8, 5, 30)).
-excecaoInc(consulta(02-05-2019, 8, 5, 30)).
+excecaoInc(consulta(02-05-2019, 8, 7, 30)).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                   Representar casos de conhecimento imperfeito interdito
