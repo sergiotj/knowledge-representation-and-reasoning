@@ -550,7 +550,7 @@ getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 involucaoInterdito(Termo) :-
-    excecaoInc(Termo),
+    excecao(Termo), % corrigido agora
     solucoes(Invariante,-Termo::Invariante, Lista),
     retrocesso(Termo),
     teste(Lista).

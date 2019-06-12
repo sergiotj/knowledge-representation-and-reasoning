@@ -177,7 +177,7 @@ removerConsulta(consulta(Data, IdUt, IdServ, Custo)) :-
 % Identificar as instituições prestadoras de serviços;
 
 listarInstituicoes(Result) :-
-    solucoes(Inst, servico(_,_,Inst,_), L),
+    solucoes(Inst, servico(_,_,Inst,_,_), L), % corrigido agora
     removeDups(L, Result).
 
 % Identificar utentes/serviços/consultas por critérios de seleção;
@@ -200,7 +200,7 @@ consultas(Data,IdUt,IdServ,LR) :-
 
 
 
-% Identificar serviços prestados por instituição/cidade/datas/custo; Miguel
+% Identificar serviços prestados por instituição/cidade/datas/custo;
 
   % Identificar serviços por Instituição
 listarServicosInstituicao(Instituicao,LR) :-
@@ -233,7 +233,7 @@ listarServicosCusto(Custo,LR) :-
 
 
 
-% Identificar os utentes de um serviço/instituição; Tiago e Joel
+% Identificar os utentes de um serviço/instituição;
 
 utentesServico(IdServ, R) :-
 	solucoes(utente(IdUt,Nome,Idade,Cidade), (consulta(Data,IdUt,IdServ,Custo),utente(IdUt,Nome,Idade,Cidade)),L),
@@ -258,7 +258,7 @@ servicosCidade(Cidade, R) :-
 	solucoes(servico(IdServ,Descricao,Instituicao,Cidade), servico(IdServ,Descricao,Instituicao,Cidade),L),
 	removeDups(L,R).
 
-% Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data. Alex
+% Calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data.
 
 custoUtente(utente(IdUt, _, _, _), Custo) :-
     solucoes(C, consulta(_, IdUt, _, C), Custos),
