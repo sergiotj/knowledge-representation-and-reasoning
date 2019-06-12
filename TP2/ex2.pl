@@ -519,7 +519,7 @@ involucaoIIUtente(Termo) :-
     solucoes(Invariante,-Termo::Invariante, Lista),
     getexcecoesU(Termo,X),
     solucoes(X,X,List),
-    removeListas(List),
+    removeLista(List),
     teste(Lista).
 
 getexcecoesU(utente(Id,Nome,Idade,Morada),excecaoInc(utente(IdUt,_,_,_))) :-
@@ -532,7 +532,7 @@ involucaoIIServico(Termo) :-
     solucoes(Invariante,-Termo::Invariante, Lista),
     getexcecoesS(Termo,X),
     solucoes(X,X,List),
-    removeListas(List),
+    removeLista(List),
     teste(Lista).
 
 getexcecoesS(servico(IdServ,Descricao,Instituicao,Cidade,Capacidade),excecaoInc(servico(IdServico,_,_,_,_))) :-
@@ -545,7 +545,7 @@ involucaoIIConsulta(Termo) :-
     solucoes(Invariante,-Termo::Invariante, Lista),
     getexcecoesC(Termo,X),
     solucoes(X,X,List),
-    removeListas(List),
+    removeLista(List),
     teste(Lista).
 
 getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
@@ -585,15 +585,10 @@ sum([X | L], S) :-
 solucoes(F, Q, R) :-
     findall(F, Q, R).
 
-remove(T) :-
-    retract(T).
-remove(T) :-
-    assert(T), !, fail.
-
-removeListas([]).
-removeListas([H|T]) :-
+removeLista([]).
+removeLista([H|T]) :-
     retract(H),
-    removeListas(T).
+    removeLista(T).
 
 atomico(Q) :-
     Q \= _ e _,
