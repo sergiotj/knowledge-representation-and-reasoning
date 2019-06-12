@@ -354,17 +354,17 @@ evolucao(utente(N,I,_),incerto,cidade) :-
 % -----
 % Incerto na descrição do serviço
 evolucao(servico(_,I,C,Cap),incerto,desc) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     evolucao(excecaoInc(servico(Id,incerto,I,C,Cap))).
 
 % Incerto na instituição do serviço
 evolucao(servico(D,_,C,Cap),incerto,inst) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     evolucao(excecaoInc(servico(Id,D,incerto,C,Cap))).
 
 % Incerto na cidade do serviço
 evolucao(servico(D,I,_,Cap),incerto,cidade) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     evolucao(excecaoInc(servico(Id,D,I,incerto,Cap))).
 
 % -----
@@ -406,7 +406,7 @@ evolucaoImpreAux(utente(Id,N,C),idade,[H|T]) :-
 % -----
 % Impreciso na descrição do serviço
 evolucaoImpre(servico(_,N,C,Cap),desc,[H|T]) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     insercao(excecaoInc(servico(Id,H,N,C,Cap))),
     evolucaoImpreAux(servico(Id,N,C,Cap),desc,T).
 
@@ -416,7 +416,7 @@ evolucaoImpreAux(servico(Id,N,C,Cap),desc,[H|T]) :-
 
 % Impreciso na cidade do serviço
 evolucaoImpre(servico(_,D,N,Cap),cidade,[H|T]) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     insercao(excecaoInc(servico(Id,D,N,H,Cap))),
     evolucaoImpreAux(servico(Id,D,N,Cap),cidade,T).
 
@@ -446,7 +446,7 @@ interdito(interdito).
 % Interdito no nome do utente
 evolucao(utente(N,I,C),nome) :-
     nextIdUt(Id),
-    evolucao(excecaoInc(utente(Id,N,I,C))),
+    evolucao(utente(Id,N,I,C)),
     interdito(N).
 
 % Interdito na idade do utente
@@ -464,19 +464,19 @@ evolucao(utente(N,I,C),cidade) :-
 % -----
 % Interdito na descrição do serviço
 evolucao(servico(D,I,C,Cap),desc) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     evolucao(servico(Id,D,I,C,Cap)),
     interdito(D).
 
 % Interdito na instituição do serviço
 evolucao(servico(D,I,C,Cap),inst) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     evolucao(servico(Id,D,I,C,Cap)),
     interdito(I).
 
 % Interdito na cidade do serviço
 evolucao(servico(D,I,C,Cap),cidade) :-
-    nextIdUt(Id),
+    nextIdServ(Id),
     evolucao(servico(Id,D,I,C,Cap)),
     interdito(C).
 
