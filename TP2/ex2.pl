@@ -506,8 +506,8 @@ involucao(Termo) :-
     nao(excecao(Termo)),
     nao(excecaoInc(Termo)),
     solucoes(Invariante,-Termo::Invariante, Lista),
-    retract(Termo),
-    teste(Lista).
+    teste(Lista),
+    retract(Termo).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Incerto e Impreciso
@@ -519,8 +519,8 @@ involucaoIIUtente(Termo) :-
     solucoes(Invariante,-Termo::Invariante, Lista),
     getexcecoesU(Termo,X),
     solucoes(X,X,List),
-    removeLista(List),
-    teste(Lista).
+    teste(Lista),
+    removeLista(List).
 
 getexcecoesU(utente(Id,Nome,Idade,Morada),excecaoInc(utente(IdUt,_,_,_))) :-
     IdUt = Id,
@@ -532,8 +532,8 @@ involucaoIIServico(Termo) :-
     solucoes(Invariante,-Termo::Invariante, Lista),
     getexcecoesS(Termo,X),
     solucoes(X,X,List),
-    removeLista(List),
-    teste(Lista).
+    teste(Lista),
+    removeLista(List).
 
 getexcecoesS(servico(IdServ,Descricao,Instituicao,Cidade,Capacidade),excecaoInc(servico(IdServico,_,_,_,_))) :-
     IdServico = IdServ,
@@ -545,8 +545,8 @@ involucaoIIConsulta(Termo) :-
     solucoes(Invariante,-Termo::Invariante, Lista),
     getexcecoesC(Termo,X),
     solucoes(X,X,List),
-    removeLista(List),
-    teste(Lista).
+    teste(Lista),
+    removeLista(List).
 
 getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
     excecaoInc(consulta(Data,IdUt,_,_)).
@@ -558,8 +558,8 @@ getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
 involucaoInterdito(Termo) :-
     excecao(Termo), % corrigido agora
     solucoes(Invariante,-Termo::Invariante, Lista),
-    retract(Termo),
-    teste(Lista).
+    teste(Lista),
+    retract(Termo).
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
 % ----------------------------------------------------------------------------------------------------
