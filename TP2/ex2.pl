@@ -249,6 +249,12 @@ nulointerdito(i6).
 si(-(-Q), R) :-
     si(Q, R), !.
 
+% negação
+si(-Q, verdadeiro) :-
+    si(Q, falso), !.
+si(-Q, falso) :-
+    si(Q, verdadeiro), !.
+
 % lei de De Morgan (A ou B) <=> -(-A e -B)
 si(Q1 ou Q2, R) :-
     si(-(-Q1 e -Q2), R), !.
@@ -578,14 +584,6 @@ sum([X | L], S) :-
 
 solucoes(F, Q, R) :-
     findall(F, Q, R).
-
-removeDups([],[]).
-removeDups([H|T],R) :-
-    pertence(H,T),
-    removeDups(T,R).
-removeDups([H|T],[H|R]) :-
-    nao(pertence(H,T)),
-    removeDups(T,R).
 
 remove(T) :-
     retract(T).
