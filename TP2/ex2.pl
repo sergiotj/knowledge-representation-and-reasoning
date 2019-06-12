@@ -279,12 +279,12 @@ si(Q, desconhecido) :-
     nao(-Q).
 
 nextIdUt(Id) :-
-    retrocesso(idUtAtual(Id)),
+    involucao(idUtAtual(Id)),
     Id2 is Id + 1,
     evolucao(idUtAtual(Id2)).
 
 nextIdServ(Id) :-
-    retrocesso(idServAtual(Id)),
+    involucao(idServAtual(Id)),
     Id2 is Id + 1,
     evolucao(idServAtual(Id2)).
 
@@ -500,7 +500,7 @@ involucao(Termo) :-
     nao(excecao(Termo)),
     nao(excecaoInc(Termo)),
     solucoes(Invariante,-Termo::Invariante, Lista),
-    retrocesso(Termo),
+    retract(Termo),
     teste(Lista).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -552,7 +552,7 @@ getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
 involucaoInterdito(Termo) :-
     excecao(Termo), % corrigido agora
     solucoes(Invariante,-Termo::Invariante, Lista),
-    retrocesso(Termo),
+    retract(Termo),
     teste(Lista).
 
 % ////////////////////////////////////////// Predicados Extra ////////////////////////////////////////
@@ -587,12 +587,6 @@ removeDups([H|T],[H|R]) :-
     nao(pertence(H,T)),
     removeDups(T,R).
 
-retrocesso(T) :-
-    T,
-    remove(T),
-    solucoes(I, -T::I, LInv),
-    teste(LInv), !.
-
 remove(T) :-
     retract(T).
 remove(T) :-
@@ -600,7 +594,7 @@ remove(T) :-
 
 removeListas([]).
 removeListas([H|T]) :-
-    retrocesso(H),
+    retract(H),
     removeListas(T).
 
 atomico(Q) :-
