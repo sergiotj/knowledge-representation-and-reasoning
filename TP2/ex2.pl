@@ -150,16 +150,12 @@ excecao(consulta(01-04-2019, 8, 7, 30)).
 
 consulta(2019-01-30, i5, 3, 25).
 excecao(consulta(A, B, C, D)) :-
-	consulta(A, i5, C, D).
+    consulta(A, i5, C, D).
 nulointerdito(i5).
-+consulta(A, B, C, D) ::    (solucoes(
-                                        (A, Interdito, C, D),
-                                        (consulta(2019-01-30, Interdito, 3, 25), nao(nulointerdito(Interdito))),
-                                        List
-								),
-                 		  		comprimento(List, N),
-                 		  		N == 0
-                 		  	).
++consulta(A, B, C, D) ::
+    (solucoes( (A, Interdito, C, D), (consulta(2019-01-30, Interdito, 3, 25), nao(nulointerdito(Interdito))), List),
+     comprimento(List, N),
+     N == 0).
 
 % ----------------------------------------------------------------------------------------------------
 % Nunca se poderá saber qual a capacidade, a partir do serviço com id = 15, que corresponde ao servico
@@ -167,16 +163,12 @@ nulointerdito(i5).
 servico(15, serv15, hospitallisboa, lisboa, i6).
 
 excecao(servico(A, B, C, D, E)) :-
-	servico(A, B, C, D, i6).
+    servico(A, B, C, D, i6).
 nulointerdito(i6).
-+servico(A, B, C, D, E) :: ( solucoes(
-                                    (A, B, C, D, Interdito),
-                                    (servico(15, serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))),
-                                    List
-                        ),
-                        comprimento(List, N),
-                        N == 0
-                        ).
++servico(A, B, C, D, E) ::
+    (solucoes( (A, B, C, D, Interdito), (servico(15, serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))), List),
+     comprimento(List, N),
+     N == 0).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 % Manipular invariantes que designem restrições à inserção e à remoção de conhecimento do sistema
@@ -186,33 +178,35 @@ nulointerdito(i6).
 %% Não permitir dois utentes com o mesmo ID
 
 +utente(Id,Nome,I,C) :: (solucoes( Id, (utente(Id, _, _, _)), S ),
-                      comprimento( S,N ),
-				              N == 1).
+                         comprimento( S,N ),
+                         N == 1).
 
-%% Não permitir dois serviços com o mesmo ID;
-%% não permitir dois serviços com a mesma descrição no mesmo hospital.
+% Não permitir dois serviços com o mesmo ID;
 
 +servico(Id,D,I,C,Cap) :: (solucoes( Id, (servico(Id, _, _, _, _)), S1 ),
                            comprimento( S1,N1 ),
-     				               N1 == 1,
-                           solucoes( (Id,D,I), (servico(_, D, I, _, _)), S2 ),
+                           N1 == 1).
+
+% Não permitir dois serviços com a mesma descrição no mesmo hospital.
++servico(Id,D,I,C,Cap) :: (solucoes( (Id,D,I), (servico(_, D, I, _, _)), S2 ),
                            comprimento( S2,N2 ),
- 				                   N2 == 1).
+                           N2 == 1).
 
 
-%% Não permitir duas consultas com o mesmo IdU e IdServ na mesma data;
-%% não permitir uma consulta com um IdU não existente;
-%% não permitir uma consulta com um IdServ não existente.
-
+% Não permitir duas consultas com o mesmo IdU e IdServ na mesma data;
 +consulta(D,IdU,IdServ,C) :: (solucoes( (D,IdU,IdServ), (consulta(D, IdU, IdServ, _)), S1 ),
                               comprimento( S1,N1 ),
-        				              N1 == 1,
-                              solucoes( IdU, (utente(IdU, _, _, _)), S2 ),
+                              N1 == 1).
+
+% Não permitir uma consulta com um IdU não existente;
++consulta(D,IdU,IdServ,C) :: (solucoes( IdU, (utente(IdU, _, _, _)), S2 ),
                               comprimento( S2,N2 ),
-        				              N2 == 1,
-                              solucoes( IdServ, (servico(IdServ, _, _, _, _)), S3 ),
+                              N2 == 1).
+
+% Não permitir uma consulta com um IdServ não existente.
++consulta(D,IdU,IdServ,C) :: (solucoes( IdServ, (servico(IdServ, _, _, _, _)), S3 ),
                               comprimento( S3,N3 ),
-  				                    N3 == 1).
+                              N3 == 1).
 
 
 % Remoção:
@@ -220,7 +214,7 @@ nulointerdito(i6).
 
 -utente(Id,Nome,I,C) :: (solucoes( IdServ, (consulta(_, Id, IdServ, _)), S ),
                         comprimento( S,N ),
-  				              N == 0).
+                                N == 0).
 
 
 %% Não permitir remover um serviço que tenha consultas associadas.
@@ -228,7 +222,7 @@ nulointerdito(i6).
 
 -servico(Id,D,I,C,Cap) :: (solucoes( Data, (consulta(Data, IdU, Id, _)), S ),
                           comprimento( S,N ),
-    				              N == 0).
+                                  N == 0).
 
 %% Não há restrições à remoção de consultas.
 
