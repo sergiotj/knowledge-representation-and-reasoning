@@ -36,8 +36,9 @@
 
 % dados iniciais
 
-idUtAtual(6).
-idServAtual(10).
+idUtAtual(9).
+idServAtual(13).
+idConsultaAtual(5).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                   Representaçao de conhecimento perfeito positivo
@@ -62,10 +63,10 @@ servico(8,serv8, htrofa       , braga    , 6).
 servico(9,serv9, hospitalbraga, braga    , 3).
 
 % Extensao do predicado consulta: Data, IdUt, IdServ, Custo -> {V,F,D}
-consulta(2015-11-20,1,2,22).
-consulta(2016-11-20,1,2,25).
-consulta(2016-09-13,3,5,30).
-consulta(2017-02-28,4,9,45).
+consulta(1, 2015-11-20,1,2,22).
+consulta(2, 2016-11-20,1,2,25).
+consulta(3, 2016-09-13,3,5,30).
+consulta(4, 2017-02-28,4,9,45).
 
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,24 +89,24 @@ consulta(2017-02-28,4,9,45).
 
 % Negação explícita
 
--utente(32,joaquim,65,braganca).
+-utente(35,joaquim,65,braganca).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                   Representar casos de conhecimento imperfeito incerto
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % ----------------------------------------------------------------------------------------------------
-% Desconhece-se a cidade do utente com o id=15, que é a Margarida com 19 anos.
+% Desconhece-se a cidade do utente com o id=7, que é a Margarida com 19 anos.
 
-utente(15, margarida, 19, i1).
+utente(7, margarida, 19, i1).
 
 excecao(utente(A,B,C,D)) :-
     utente(A,B,C,i1).
 
 % ----------------------------------------------------------------------------------------------------
-% Não se sabe qual a descrição do serviço 11 e a sua capacidade, que é o hospital da covilhã.
+% Não se sabe qual a descrição do serviço 10 e a sua capacidade, que é o hospital da covilhã.
 
-servico(11, i2, hospitalcovilha, covilha, i3).
+servico(10, i2, hospitalcovilha, covilha, i3).
 
 excecao(servico(A, B, C, D, E)) :-
     servico(A, i2, C, D, i3).
@@ -115,16 +116,16 @@ excecao(servico(A, B, C, D, E)) :-
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 % ----------------------------------------------------------------------------------------------------
-% Não se sabe se a utente com id=11, com o nome Inês, residente na cidade de Lisboa, tem 23 ou 24 anos.
+% Não se sabe se a utente com id=8, com o nome Inês, residente na cidade de Lisboa, tem 23 ou 24 anos.
 
-excecao(utente(11,ines,23,lisboa)).
-excecao(utente(11,ines,24,lisboa)).
+excecao(utente(8,ines,23,lisboa)).
+excecao(utente(8,ines,24,lisboa)).
 
 % ----------------------------------------------------------------------------------------------------
-% Desconhece-se se o servico com id=10, serv10 do Hospital de Santa Maria no Porto tem capacidade 4 ou
+% Desconhece-se se o servico com id=11, serv10 do Hospital de Santa Maria no Porto tem capacidade 4 ou
 % capacidade 5
-excecao(servico(10,serv10, hsantamaria, porto, 4)).
-excecao(servico(10,serv10, hsantamaria, porto, 5)).
+excecao(servico(11,serv10, hsantamaria, porto, 4)).
+excecao(servico(11,serv10, hsantamaria, porto, 5)).
 
 % ----------------------------------------------------------------------------------------------------
 % Não se sabe se a consulta prestada em 25-12-2018, pelo servico com id=8 ao utente com id=3
@@ -158,15 +159,15 @@ nulointerdito(i5).
      N == 0).
 
 % ----------------------------------------------------------------------------------------------------
-% Nunca se poderá saber qual a capacidade, a partir do serviço com id = 15, que corresponde ao servico
+% Nunca se poderá saber qual a capacidade, a partir do serviço com id = 12, que corresponde ao servico
 % com descricao serv15, do hospitallisboa, na cidade de Lisboa
-servico(15, serv15, hospitallisboa, lisboa, i6).
+servico(12, serv15, hospitallisboa, lisboa, i6).
 
 excecao(servico(A, B, C, D, E)) :-
     servico(A, B, C, D, i6).
 nulointerdito(i6).
 +servico(A, B, C, D, E) ::
-    (solucoes( (A, B, C, D, Interdito), (servico(15, serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))), List),
+    (solucoes( (A, B, C, D, Interdito), (servico(12, serv15, hospitallisboa, lisboa, Interdito), nao(nulointerdito(Interdito))), List),
      comprimento(List, N),
      N == 0).
 
@@ -513,7 +514,6 @@ evolucao(consulta(D,IdUt,IdServ,C),custo) :-
 % Predicado involucao para conhecimento perfeito
 involucao(Termo) :-
     nao(excecao(Termo)),
-    nao(excecao(Termo)),
     solucoes(Invariante,-Termo::Invariante, Lista),
     teste(Lista),
     retract(Termo).
@@ -525,47 +525,42 @@ involucao(Termo) :-
 % Predicado involucao para conhecimento incerto e impreciso para utentes
 involucaoIIUtente(Termo) :-
     excecao(Termo),
-    solucoes(Invariante,-Termo::Invariante, Lista),
-    getexcecoesU(Termo,X),
-    solucoes(X,X,List),
-    teste(Lista),
-    removeLista(List).
+    solucoes(Invariante,-Termo::Invariante, Is),
+    getexcecoesU(Termo,Excecoes),
+    teste(Is),
+    removeLista(Excecoes).
 
-getexcecoesU(utente(Id,Nome,Idade,Morada),excecao(utente(IdUt,_,_,_))) :-
-    IdUt = Id,
-    excecao(utente(IdUt,_,_,_)).
+getexcecoesU(utente(Id,_,_,_), L) :-
+    solucoes(excecao(utente(Id,A,B,C)), excecao(utente(Id,A,B,C)), L).
 
 % Predicado involucao para conhecimento incerto e impreciso para serviços
 involucaoIIServico(Termo) :-
     excecao(Termo),
-    solucoes(Invariante,-Termo::Invariante, Lista),
-    getexcecoesS(Termo,X),
-    solucoes(X,X,List),
-    teste(Lista),
-    removeLista(List).
+    solucoes(Invariante,-Termo::Invariante, Is),
+    getexcecoesS(Termo,Excecoes),
+    teste(Is),
+    removeLista(Excecoes).
 
-getexcecoesS(servico(IdServ,Descricao,Instituicao,Cidade,Capacidade),excecao(servico(IdServico,_,_,_,_))) :-
-    IdServico = IdServ,
-    excecao(servico(IdServico,_,_,_,_)).
+getexcecoesS(servico(Id,_,_,_,_), L) :-
+    solucoes(excecao(servico(Id,A,B,C,D)), excecao(servico(Id,A,B,C,D)), L).
 
 % Predicado involucao para conhecimento incerto e impreciso para consultas
 involucaoIIConsulta(Termo) :-
     excecao(Termo),
-    solucoes(Invariante,-Termo::Invariante, Lista),
-    getexcecoesC(Termo,X),
-    solucoes(X,X,List),
-    teste(Lista),
-    removeLista(List).
+    solucoes(Invariante,-Termo::Invariante, Is),
+    getexcecoesC(Termo,Excecoes),
+    teste(Is),
+    removeLista(Excecoes).
 
-getexcecoesC(consulta(Data,IdUt,IdServ,Custo),X) :-
-    excecao(consulta(Data,IdUt,_,_)).
+getexcecoesC(consulta(_,IdU,IdS,_), L) :-
+    solucoes(excecao(consulta(Data,IdU,IdS,Custo)), excecao(consulta(Data,IdU,IdS,Custo)), L).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Involução - Tipo Interdito
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 involucaoInterdito(Termo) :-
-    excecao(Termo), % corrigido agora
+    excecao(Termo),
     solucoes(Invariante,-Termo::Invariante, Lista),
     teste(Lista),
     retract(Termo).
