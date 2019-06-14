@@ -372,11 +372,18 @@ evolucao(consulta(_,IdUt,IdServ,C),incerto,data):-
 evolucao(consulta(D,IdUt,IdServ,_),incerto,custo):-
     evolucao(excecao(consulta(D,IdUt,IdServ,incerto))).
 
+% Incerto no id do utente
+evolucao(consulta(D,_,IdServ,C),incerto,utente):-
+    evolucao(excecao(consulta(D,incerto,IdServ,C))).
+
+% Incerto no id do serviço
+evolucao(consulta(D,IdUt,_,C),incerto,servico):-
+    evolucao(excecao(consulta(D,IdUt,incerto,C))).
+
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Evolução - Tipo Impreciso
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-evolucaoImpre(_,_,[]).
 evolucaoImpreAux(_,_,[]).
 
 % Impreciso na cidade do utente
@@ -432,6 +439,18 @@ evolucaoImpre(consulta(D,IdUt,IdServ),custo,[H|T]) :-
     nao(consulta(_,IdUt,IdServ,_)),
     insercao(excecao(consulta(D,IdUt,IdServ,H))),
     evolucaoImpre(consulta(D,IdUt,IdServ),custo,T).
+
+% Impreciso no utente da consulta
+evolucaoImpre(consulta(Data,IdServ,C),utente,[H|T]) :-
+    nao(consulta(Data,_,IdServ,_)),
+    insercao(excecao(consulta(Data,H,IdServ,C))),
+    evolucaoImpre(consulta(Data,IdServ,C),utente,T).
+
+% Impreciso no servico da consulta
+evolucaoImpre(consulta(D,IdUt,Custo),servico,[H|T]) :-
+    nao(consulta(_,IdUt,_,Custo)),
+    insercao(excecao(consulta(D,IdUt,H,Custo))),
+    evolucaoImpre(consulta(D,IdUt,Custo),servico,T).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                     Evolução - Tipo Interdito
