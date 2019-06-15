@@ -63,10 +63,10 @@ servico(8,serv8, htrofa       , braga    , 6).
 servico(9,serv9, hospitalbraga, braga    , 3).
 
 % Extensao do predicado consulta: Data, IdUt, IdServ, Custo -> {V,F,D}
-consulta(1, 2015-11-20,1,2,22).
-consulta(2, 2016-11-20,1,2,25).
-consulta(3, 2016-09-13,3,5,30).
-consulta(4, 2017-02-28,4,9,45).
+consulta(2015-11-20,1,2,22).
+consulta(2016-11-20,1,2,25).
+consulta(2016-09-13,3,5,30).
+consulta(2017-02-28,4,9,45).
 
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
