@@ -31,7 +31,7 @@
 :- dynamic servico/5.
 :- dynamic consulta/4.
 :- dynamic excecao/1.
-:- dynamic interdito/1.
+:- dynamic nulointerdito/1.
 :- dynamic incerto/1.
 
 % dados iniciais
@@ -315,6 +315,21 @@ excecao(consulta(Data,IdUt,IdServ,Custo)) :-
     consulta(Data,IdUt,IdServ,incerto).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
+%                                         Registo de entidades
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+registarUtente(Nome, Idade, Cidade) :-
+    nextIdUt(Id),
+    evolucao(utente(Id, Nome, Idade, Cidade)).
+
+registarServico(Descricao, Instituicao, Cidade, Capacidade) :-
+    nextIdServ(Id),
+    evolucao(servico(Id, Descricao, Instituicao, Custo, Capacidade)).
+
+registarConsulta(Data, IdUt, IdServ, Custo) :-
+    evolucao(consulta(Data, IdUt, IdServ, Custo)).
+
+% ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                       Evolução do Conhecimento
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -460,52 +475,100 @@ evolucaoImpre(consulta(D,IdUt,Custo),servico,[H|T]) :-
 interdito(interdito).
 
 % Interdito no nome do utente
-evolucao(utente(N,I,C),nome) :-
+evolucao(utente(Nome,Idade,Cidade),nome) :-
     nextIdUt(Id),
-    evolucao(utente(Id,N,I,C)),
-    interdito(N).
+    evolucao(utente(Id,Nome,Idade,Cidade)),
+    assert(nulointerdito(Nome)),
+    assert(
+        +utente(A, B, C, D) ::
+            (solucoes( Interdito, (utente(Id, Interdito, Idade, Cidade), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % Interdito na idade do utente
-evolucao(utente(N,I,C),idade) :-
+evolucao(utente(Nome, Idade, Cidade),idade) :-
     nextIdUt(Id),
-    evolucao(utente(Id,N,I,C)),
-    interdito(I).
+    evolucao(utente(Id,Nome,Idade,Cidade)),
+    assert(nulointerdito(Idade)),
+    assert(
+        +utente(A, B, C, D) ::
+            (solucoes( Interdito, (utente(Id, Nome, Interdito, Cidade), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % Interdito na cidade do utente
-evolucao(utente(N,I,C),cidade) :-
+evolucao(utente(Nome,Idade,Cidade),cidade) :-
     nextIdUt(Id),
-    evolucao(utente(Id,N,I,C)),
-    interdito(C).
+    evolucao(utente(Id,Nome,Idade,Cidade)),
+    assert(nulointerdito(Cidade)),
+    assert(
+        +utente(A, B, C, D) ::
+            (solucoes( Interdito, (utente(Id, Nome, Idade, Interdito), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % -----
 % Interdito na descrição do serviço
-evolucao(servico(D,I,C,Cap),desc) :-
+evolucao(servico(Descricao,Instituicao,Cidade,Capacidade),descricao) :-
     nextIdServ(Id),
-    evolucao(servico(Id,D,I,C,Cap)),
-    interdito(D).
+    evolucao(servico(Id,Descricao,Instituicao,Cidade,Capacidade)),
+    assert(nulointerdito(Descricao)),
+    assert(
+        +servico(A, B, C, D, E) ::
+            (solucoes( Interdito, (servico(Id, Interdito, Instituicao, Cidade, Capacidade), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % Interdito na instituição do serviço
-evolucao(servico(D,I,C,Cap),inst) :-
+evolucao(servico(Descricao,Instituicao,Cidade,Capacidade),instituicao) :-
     nextIdServ(Id),
-    evolucao(servico(Id,D,I,C,Cap)),
-    interdito(I).
+    evolucao(servico(Id,Descricao,Instituicao,Cidade,Capacidade)),
+    assert(nulointerdito(Instituicao)),
+    assert(
+        +servico(A, B, C, D, E) ::
+            (solucoes( Interdito, (servico(Id, Descricao, Interdito, Cidade, Capacidade), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % Interdito na cidade do serviço
-evolucao(servico(D,I,C,Cap),cidade) :-
+evolucao(servico(Descricao,Instituicao,Cidade,Capacidade),cidade) :-
     nextIdServ(Id),
-    evolucao(servico(Id,D,I,C,Cap)),
-    interdito(C).
+    evolucao(servico(Id,Descricao,Instituicao,Cidade,Capacidade)),
+    assert(nulointerdito(Cidade)),
+    assert(
+        +servico(A, B, C, D, E) ::
+            (solucoes( Interdito, (servico(Id, Descricao, Instituicao, Interdito, Capacidade), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % -----
 % Interdito na data da consulta
-evolucao(consulta(D,IdUt,IdServ,C),data) :-
-    evolucao(consulta(D,IdUt,IdServ,C)),
-    interdito(D).
+evolucao(consulta(Data,IdUt,IdServ,Custo),data) :-
+    evolucao(consulta(Data,IdUt,IdServ,Custo)),
+    assert(nulointerdito(Data)),
+    assert(
+        +consulta(A, B, C, D) ::
+            (solucoes( Interdito, (consulta(Interdito, IdUt, IdServ, Custo), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % Interdito no custo da consulta
-evolucao(consulta(D,IdUt,IdServ,C),custo) :-
-    evolucao(consulta(D,IdUt,IdServ,C)),
-    interdito(C).
+evolucao(consulta(Data,IdUt,IdServ,Custo),custo) :-
+    evolucao(consulta(Data,IdUt,IdServ,Custo)),
+    assert(nulointerdito(Custo)),
+    assert(
+        +consulta(A, B, C, D) ::
+            (solucoes( Interdito, (consulta(Data, IdUt, IdServ, Interdito), nao(nulointerdito(Interdito))), List),
+             comprimento(List, N),
+             N == 0)
+    ).
 
 % ////////////////////////////////////////////////////////////////////////////////////////////////////
 %                                       Involução do Conhecimento
